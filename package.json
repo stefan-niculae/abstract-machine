@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/stefan1niculae/abstract-machine#readme",
   "dependencies": {
-    "nearley": "^2.7.14"
+    "jasmine": "^2.5.3",
+    "nearley": "^2.7.14",
+    "underscore": "^1.8.3"
   }
 }

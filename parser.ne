@@ -10,23 +10,23 @@
 
 
 # A program
-Main ->  Stmt {% head %}
-	  | Expr {% head %}
-	  | Cond {% head %}
+Main -> Stmt 				{% head %}
+	  | Expr 				{% head %}
+	  | Cond 				{% head %}
 
 # Expression
-Expr -> Nr {% dhead %} # ?? why double head?
-	  | "!" _ Var {% function arg2(d) { return {type:"valof", var:d[2]} } %}
-	  | Expr _ IOp _ Expr {% strip %}
+Expr -> Nr 					{% head %}
+	  | "!" _ Var 			{% function(d) { return {type:"valof", var:d[2]} } %}
+	  | Expr _ IOp _ Expr 	{% strip %}
 
 # Conditional
-Cond -> Bl {% dhead %} # ?? why double head?
-	  | Expr _ BOp _ Expr {% function(d) {return {type:'cond', val: strip(d)}} %}
+Cond -> Bl {% head %}
+	  | Expr _ BOp _ Expr 	{% function(d) { return {type:'cond', e1:d[0], op:d[2] e2:d[4] } } %}
 
 # Statement
 Stmt -> "()" 				# skip
-	  | Var _ ":=" _ Expr {% strip %} 	# assign
-	  | Stmt _ ";" _ Stmt {% strip %}		# sequence
+	  | Var _ ":=" _ Expr 	{% strip %} 	# assign
+	  | Stmt _ ";" _ Stmt 	{% strip %}		# sequence
 	  | "if" _ Cond _ "then" _ Stmt _ "else" _ Stmt {% strip %}
 	  | "while" _ Cond _ "do" _ Stmt {% strip %}
 
@@ -44,8 +44,8 @@ IOp -> "+" {% type('iop') %}
 # Boolean Operators
 BOp -> "==" {% type('bop') %}
 	 | "/=" {% type('bop') %}
-	 | "<" {% type('bop') %}
-	 | ">" {% type('bop') %}
+	 | "<"  {% type('bop') %}
+	 | ">"  {% type('bop') %}
 	 | "<=" {% type('bop') %}
 	 | ">=" {% type('bop') %}
 
@@ -57,7 +57,7 @@ BOp -> "==" {% type('bop') %}
 
 
 # Variable
-Var -> [\w_]:+ {% dhead %} # words, letters or underscores
+Var -> [\w_]:+ {% function(d) {return d[0].join('')} %} # words, letters or underscores
 
 # Boolean literal
 Bl -> "true" | "false"
