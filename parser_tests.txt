@@ -1,0 +1,19 @@
+()
+var := 0
+x := 0; ()
+if true then () else ()
+while true do ()
+
+false
+0 < 1
+
+7
+!x
+2 + 3
+
+
+while 0 <= !x do ()
+sum:=!sum+!x
+x := !x - 1
+
+while 0 <= !x do sum:=!sum+!x; x := !x - 1

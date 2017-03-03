@@ -1,0 +1,22 @@
+{
+  "name": "abstract-machine",
+  "version": "0.0.1",
+  "description": "abstract machine online interpreter",
+  "main": "-",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stefan1niculae/abstract-machine.git"
+  },
+  "author": "Stefan Niculae",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stefan1niculae/abstract-machine/issues"
+  },
+  "homepage": "https://github.com/stefan1niculae/abstract-machine#readme",
+  "dependencies": {
+    "nearley": "^2.7.14"
+  }
+}
