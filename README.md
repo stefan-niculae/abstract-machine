@@ -28,7 +28,7 @@ Configuration: Control, Stack, Memory `<c, s, m>`
 
 Rules:
 
-```Python
+```php
 # Arithmetic Expressions
           <n c, s, m>  ->  <c, n s, m>
          <!v c, s, m>  ->  <c, m(v) s, m>
