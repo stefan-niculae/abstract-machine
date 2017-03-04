@@ -22,7 +22,7 @@ iop ::= + | - | * | / | %
 bop ::= == | != | < | > | <= | >=
 ```
 
-Brackets and parentheses:
+**Brackets and parentheses**:
 ```javascript
 while x > y do {
   x := (5+1) / 2;
@@ -32,6 +32,17 @@ while x > y do {
 - not needed for `if`/`while` condition
 - optional for `if`/`while` bodies
 - optional in expressions
+
+
+**Order of Operations**:
+
+- Bug: `4 + 6/2` evaluates to `(4+6) / 2`
+- Workaround: `4 + (6/2)` to get `7`
+
+
+**Keywords**:
+
+- Bug: the following are treated as a variable name: `true, false, if, then, else, while, do`
 
 
 ### Operational Semantics
