@@ -5,6 +5,18 @@ Control stack, Work stack, Memory model of execution
 Parser Generator: [nearley](http://nearley.js.org) ([online playground](https://omrelli.ug/nearley-playground/))
 
 
+# Build
+
+TODO: add nearley to de dependencies
+
+- `npm i`
+- `nearleyc parser.ne > grammar.js`
+
+# Run
+
+TODO
+
+
 
 ## IMP Language
 
