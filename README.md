@@ -22,6 +22,18 @@ iop ::= + | - | * | / | %
 bop ::= == | != | < | > | <= | >=
 ```
 
+Brackets and parentheses:
+```javascript
+while x > y do {
+  x := (5+1) / 2;
+}
+```
+
+- not needed for `if`/`while` condition
+- optional for `if`/`while` bodies
+- optional in expressions
+
+
 ### Operational Semantics
 
 Configuration: Control, Stack, Memory `<c, s, m>`
