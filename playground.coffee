@@ -88,11 +88,36 @@ trans = ({c, s, m}) ->
     [n, v, st...] = s
     newMem = clone m # maintain immutability of memory from call to call
     newMem[v] = n
-    return {c:t, s:st, m:newMem}
+    return { c:t, s:st, m:newMem }
+
+  # CondC
+  if h.type is 'if'
+    # Use 'branch' as a command symbol in C to differentiate it from the statemtnt 'if'
+    return { c:[h.cond, 'branch', t...], s:[h.ct, h.cf, s...], m }
+
+  # CondT, CondF
+  if h is 'branch'
+    [b, ct, cf, st...] = s
+    comm = if b then ct else cf
+    return { c:[comm, t...], s:st, m }
+
+  # Secv
+  if h.type is 'seq'
+    return { c:[h.s1, h.s2, t...], s, m }
 
 
+  # IterC
+  if h.type is 'while'
+    return { c:[h.cond, 'loop', t...], s:[h.cond, h.body, s...], m }
 
-
+  # IterT, IterF
+  if h is 'loop'
+    [loopAgain, cond, body, st...] = s
+    if loopAgain
+      whileStmt = {type: 'while', cond, body}
+      return {c:[cond, whileStmt, t...], s:st, m}
+    else
+      return {c:t, s:st, m}
 
 #  {c, s, m}
 

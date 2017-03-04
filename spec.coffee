@@ -189,7 +189,7 @@ describe 'The transition function for commands', ->
       s: []
       m: {}
 
-  it 'can disperse an assignment expression to c and s', ->
+  it 'can disperse an assignment statement to c and s', ->
     state =
       c: [{type: 'assign', var: 'x', val: 1}, '()']
       s: [8]
@@ -208,3 +208,85 @@ describe 'The transition function for commands', ->
       c: ['()']
       s: [8]
       m: x: 1, y: 2
+
+
+  it 'can sequence statements', ->
+    assignment = {type: 'assign', var: 'x', val: 1}
+    state =
+      c: [{type:'seq', s1:'()', s2:assignment}, '()']
+      s: []
+      m: {}
+    expect(trans(state)).toEqual
+      c: ['()', assignment, '()']
+      s: []
+      m: {}
+
+
+
+describe 'The transition function for branching and looping', ->
+
+  it 'can disperse an if statements to c and s', ->
+    assignment = {type: 'assign', var: 'x', val: 1}
+    state =
+      c: [{type: 'if', cond: true, ct: '()', cf: assignment }, '()']
+      s: [8]
+      m: {}
+    expect(trans(state)).toEqual
+      c: [true, 'branch', '()']
+      s: ['()', assignment, 8]
+      m: {}
+
+
+  it 'can branch based on the top of the stack (true)', ->
+    assignment = {type: 'assign', var: 'x', val: 1}
+    state =
+      c: ['branch', '()']
+      s: [true, '()', assignment, 8]
+      m: {}
+    expect(trans(state)).toEqual
+      c: ['()', '()']
+      s: [8]
+      m: {}
+
+  it 'can branch based on the top of the stack (false)', ->
+    assignment = {type: 'assign', var: 'x', val: 1}
+    state =
+      c: ['branch', '()']
+      s: [false, '()', assignment, 8]
+      m: {}
+    expect(trans(state)).toEqual
+      c: [assignment, '()']
+      s: [8]
+      m: {}
+
+  it 'can disperse a while statement to c and s ', ->
+    state =
+      c: [{type:'while', cond:true, body:'()'}, '()']
+      s: [8]
+      m: {}
+    expect(trans(state)).toEqual
+      c: [true, 'loop', '()']
+      s: [true, '()', 8]
+      m: {}
+
+  it 'can loop when the top of the stack is false', ->
+    cond = {type: 'cond', e1: 1, op: '<', e2: 2}
+    state =
+      c: ['loop', '()']
+      s: [false, cond, '()', 8]
+      m: {}
+    expect(trans(state)).toEqual
+      c: ['()']
+      s: [8]
+      m: {}
+
+  it 'can loop when the top of the stack is true', ->
+    cond = {type: 'cond', e1: 1, op: '<', e2: 2}
+    state =
+      c: ['loop', '()']
+      s: [true, cond, '()', 8]
+      m: {}
+    expect(trans(state)).toEqual
+      c: [cond, {type:'while', cond, body:'()'}, '()']
+      s: [8]
+      m: {}

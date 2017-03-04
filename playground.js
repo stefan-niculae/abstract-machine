@@ -61,7 +61,7 @@
   };
 
   trans = function(arg) {
-    var c, f, h, m, n, n1, n2, newMem, ref, ref1, s, st, t, v;
+    var b, body, c, cf, comm, cond, ct, f, h, loopAgain, m, n, n1, n2, newMem, ref, ref1, s, st, t, v, whileStmt;
     c = arg.c, s = arg.s, m = arg.m;
     h = c[0], t = 2 <= c.length ? slice.call(c, 1) : [];
     if ((ref = typeof h) === 'number' || ref === 'boolean') {
@@ -122,6 +122,57 @@
         s: st,
         m: newMem
       };
+    }
+    if (h.type === 'if') {
+      return {
+        c: [h.cond, 'branch'].concat(slice.call(t)),
+        s: [h.ct, h.cf].concat(slice.call(s)),
+        m: m
+      };
+    }
+    if (h === 'branch') {
+      b = s[0], ct = s[1], cf = s[2], st = 4 <= s.length ? slice.call(s, 3) : [];
+      comm = b ? ct : cf;
+      return {
+        c: [comm].concat(slice.call(t)),
+        s: st,
+        m: m
+      };
+    }
+    if (h.type === 'seq') {
+      return {
+        c: [h.s1, h.s2].concat(slice.call(t)),
+        s: s,
+        m: m
+      };
+    }
+    if (h.type === 'while') {
+      return {
+        c: [h.cond, 'loop'].concat(slice.call(t)),
+        s: [h.cond, h.body].concat(slice.call(s)),
+        m: m
+      };
+    }
+    if (h === 'loop') {
+      loopAgain = s[0], cond = s[1], body = s[2], st = 4 <= s.length ? slice.call(s, 3) : [];
+      if (loopAgain) {
+        whileStmt = {
+          type: 'while',
+          cond: cond,
+          body: body
+        };
+        return {
+          c: [cond, whileStmt].concat(slice.call(t)),
+          s: st,
+          m: m
+        };
+      } else {
+        return {
+          c: t,
+          s: st,
+          m: m
+        };
+      }
     }
   };
 
