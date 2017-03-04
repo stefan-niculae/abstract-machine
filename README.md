@@ -2,6 +2,9 @@
 
 Control stack, Work stack, Memory model of execution
 
+Parser Generator: [nearley](http://nearley.js.org) ([online playground](https://omrelli.ug/nearley-playground/))
+
+
 
 ## IMP Language
 
