@@ -1,75 +1,80 @@
 #@preprocessor coffee
 
-# editor: https://omrelli.ug/nearley-playground/
-
-@{% function head(d) { return d[0] } %}
-@{% function dhead(d) { return d[0][0] } %}
-@{% function strip(d) { return d.filter(function(x) {return x!==null})} %}
-@{% function type(name) { return function(d) { return {type:name, val:d[0]} } } %}
-
+@{% function isKeyword(x) { return ['true', 'false', 'if', 'then', 'else', 'while', 'do']} %}
+@{% function strip(d) { return d.filter(function(x) {return x !== null}) }%}
+@{% function striphead(d) {return strip(d)[0]} %}
+# TODO function composition
 
 
 # A program
-Main -> Stmt 				{% head %}
-	  | Expr 				{% head %}
-	  | Cond 				{% head %}
-
-# Expression
-Expr -> Nr 					{% head %}
-	  | "!" _ Var 			{% function(d) { return {type:"valof", var:d[2]} } %}
-	  | Expr _ IOp _ Expr 	{% strip %}
-
-# Conditional
-Cond -> Bl {% head %}
-	  | Expr _ BOp _ Expr 	{% function(d) { return {type:'cond', e1:d[0], op:d[2] e2:d[4] } } %}
+Main -> _ Stmt _ {% striphead %}
+	  | _ Expr _ {% striphead %} # DEBUG, to remove
+	  | _ Cond _ {% striphead %} # DEBUG, to remove
 
 # Statement
-Stmt -> "()" 				# skip
-	  | Var _ ":=" _ Expr 	{% strip %} 	# assign
-	  | Stmt _ ";" _ Stmt 	{% strip %}		# sequence
-	  | "if" _ Cond _ "then" _ Stmt _ "else" _ Stmt {% strip %}
-	  | "while" _ Cond _ "do" _ Stmt {% strip %}
+Stmt -> "()" 			  {% id %} # skip
+	  | Var _ ":=" _ Expr {% function(d) { return {type:'assign', var: d[0], val: d[4]} } %} 	# assign
+	  | Stmt _ ";" _ Stmt {% function(d) { return {type:'seq',    s1:  d[0], s2:  d[4]} } %}	# sequence
+	  | "if" __ Cond __ "then" __ Body __ "else" __ Body
+	  					  {% function(d) { return {type:'if',     cond:d[2], st:  d[6], sf:d[10]} } %}
+	  | "while" __ Cond __ "do" __ Body
+	  					  {% function(d) { return {type:'while',  cond:d[2], body:d[6]} } %}
+Body -> Stmt              {% id %}
+	  | "{" _ Stmt _ "}"  {% function(d) { return d[2] } %} # optional brackets (both)
+# TODO: break, continue, exit
+
+# Expression
+Expr -> Nr 				  {% id %}
+	  | "!" _ Var 		  {% function(d) { return {type:'valof',  var:d[2]} } %}
+	  | Expr _ IOp _ Expr {% function(d) { return {type:'expr',   e1: d[0],  op:d[2], e2:d[4]} } %}
+	  | "(" _ Expr _ ")"  {% function(d) { return d[2] } %}
+
+# Conditional
+Cond -> Bl {% id %}
+	  | Expr _ BOp _ Expr {% function(d) { return {type:'cond',   e1:d[0],   op:d[2], e2:d[4]} } %}
 
 
 
 # Arithmetic Operator
-IOp -> "+" {% type('iop') %}
-	 | "-" {% type('iop') %}
-	 | "/" {% type('iop') %}
-	 | "*" {% type('iop') %}
-	 | "%" {% type('iop') %}
-
-# TODO: unary operators "^", "Not"?
+IOp -> "*"  {% id %}
+	 | "/"  {% id %}
+	 | "+"  {% id %}
+	 | "-"  {% id %}
+	 #| "%"  {% id %}
 
 # Boolean Operators
-BOp -> "==" {% type('bop') %}
-	 | "/=" {% type('bop') %}
-	 | "<"  {% type('bop') %}
-	 | ">"  {% type('bop') %}
-	 | "<=" {% type('bop') %}
-	 | ">=" {% type('bop') %}
+BOp -> "==" {% id %}
+	 | "/=" {% id %}
+	 | "<"  {% id %}
+	 | ">"  {% id %}
+	 | "<=" {% id %}
+	 | ">=" {% id %}
 
 # TODO: LOp "And", "Or", "Xor"?
+# TODO: unary operators "^", "Not"?
 
 
-# TODO: break, continue, exit?
-
-
-
-# Variable
-Var -> [\w_]:+ {% function(d) {return d[0].join('')} %} # words, letters or underscores
 
 # Boolean literal
-Bl -> "true" | "false"
+Bl -> "true"         {% function(d) { return true } %}
+    | "false"        {% function(d) { return false } %}
 
 # Number literal
-Nr -> Float | Int
-Float -> Int "." Int   {% function(d) {return parseFloat(d[0] + '.' + d[2])  } %}
-# TODO negative number literals!
-Int -> [0-9]:+        {% function(d) {return parseInt(d[0].join(""))   } %}
+Nr    -> Float       {% id %}
+       | Int         {% id %}
+Float -> Int "." Int {% function(d) { return parseFloat(d[0] + '.' + d[2]) } %}
+Int   -> [0-9]:+     {% function(d) { return parseInt  (d[0].join(''))     } %}
+# TODO: negative number literals?
 
 
 
-# TODO: newline
+# Variable (alphanumeric & underscores)
+Var -> [\w_]:+       {% function(d) { return d[0].join('') } %}
+# TODO check if not in keywords!
+
+
+
 # Whitespace
-_ -> [\s]:*     {% function(d) {return null } %}
+__ -> [\s\\n]:+      {% function(d) { return null } %}  # required whitespace
+_  -> [\s\\n]:*      {% function(d) { return null } %}
+

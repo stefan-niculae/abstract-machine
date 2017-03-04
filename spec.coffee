@@ -1,4 +1,4 @@
-trans = require './playground'
+trans = require './evaluator'
 
 
 
@@ -228,7 +228,7 @@ describe 'The transition function for branching and looping', ->
   it 'can disperse an if statements to c and s', ->
     assignment = {type: 'assign', var: 'x', val: 1}
     state =
-      c: [{type: 'if', cond: true, ct: '()', cf: assignment }, '()']
+      c: [{type: 'if', cond: true, st: '()', sf: assignment }, '()']
       s: [8]
       m: {}
     expect(trans(state)).toEqual

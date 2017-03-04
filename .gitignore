@@ -1,1 +1,5 @@
 /node_modules/
+
+# compiled
+*.js
+*.js.map

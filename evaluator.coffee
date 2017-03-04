@@ -1,5 +1,3 @@
-jasmine = require 'jasmine'
-
 func =
   # iop
   '+': (a, b) -> a + b
@@ -93,12 +91,12 @@ trans = ({c, s, m}) ->
   # CondC
   if h.type is 'if'
     # Use 'branch' as a command symbol in C to differentiate it from the statemtnt 'if'
-    return { c:[h.cond, 'branch', t...], s:[h.ct, h.cf, s...], m }
+    return { c:[h.cond, 'branch', t...], s:[h.st, h.sf, s...], m }
 
   # CondT, CondF
   if h is 'branch'
-    [b, ct, cf, st...] = s
-    comm = if b then ct else cf
+    [b, stmtT, stmtF, st...] = s
+    comm = if b then stmtT else stmtF
     return { c:[comm, t...], s:st, m }
 
   # Secv

@@ -2,7 +2,7 @@
 (function() {
   var trans;
 
-  trans = require('./playground');
+  trans = require('./evaluator');
 
   describe('The transition function for int expressions', function() {
     it('can move an int from c to s', function() {
@@ -349,8 +349,8 @@
           {
             type: 'if',
             cond: true,
-            ct: '()',
-            cf: assignment
+            st: '()',
+            sf: assignment
           }, '()'
         ],
         s: [8],
