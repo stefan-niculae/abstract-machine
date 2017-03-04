@@ -3,3 +3,6 @@
 # compiled
 *.js
 *.js.map
+
+# generated
+grammar.*
