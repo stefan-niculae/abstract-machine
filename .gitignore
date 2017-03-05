@@ -5,3 +5,7 @@
 *.js
 *.js.map
 !webpack.config.js
+
+# generated
+grammar.coffee
+bundle.js
