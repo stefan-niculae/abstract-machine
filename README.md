@@ -5,22 +5,24 @@ Control stack, Work stack, Memory model of execution
 Parser Generator: [nearley](http://nearley.js.org) ([online playground](https://omrelli.ug/nearley-playground/))
 
 
+
 # Build
+- download dependencies: `npm install` TODO: add nearley to de dependencies
+- fix nearley script: `curl https://raw.githubusercontent.com/Hardmath123/nearley/master/lib/nearley.js > node_modules/nearley/lib/nearley.js`
+- bundle scripts: `node_modules/.bin/webpack`
 
-TODO: add nearley to de dependencies
 
-- download dependencies: `npm install`
-- generate grammar: `node_modules/nearley/bin/nearleyc.js parser-generator.ne > grammar.coffee`
-- compile coffee-script: `node_modules/coffee-script/bin/coffee --compile --map .`
+# Dev
+- generate grammar: `node_modules/.bin/nearleyc src/grammar.ne > src/grammar.coffee`
+- compile coffee-script: `node_modules/.bin/coffee --compile --map .`
+
 
 # Test
-
-`node_modules/jasmine/bin/jasmine.js tests/syntax.js tests/semantics.js`
+`node_modules/.bin/jasmine tests/syntax.js tests/semantics.js`
 
 
 # Run
-
-TODO
+open `visualization/page.html`
 
 
 

@@ -1,4 +1,4 @@
-parse = require '../parser'
+parse = require '../src/parser'
 
 
 # TODO: debug grammar (where Main -> Expr, Cond)?

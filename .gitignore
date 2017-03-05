@@ -1,8 +1,7 @@
+# dependencies
 /node_modules/
 
 # compiled
 *.js
 *.js.map
-
-# generated
-grammar.*
+!webpack.config.js

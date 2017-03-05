@@ -1,4 +1,4 @@
-nearley = require './nearley' # TODO: import it from npm instead of the local one
+nearley = require 'nearley' # TODO: import it from npm instead of the local one
 grammar = require './grammar'
 
 
