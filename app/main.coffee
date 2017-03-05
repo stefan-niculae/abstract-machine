@@ -1,14 +1,13 @@
-JSONFormatter = require 'json-formatter-js'
 $ = require 'jquery'
+parse = require '../src/parser'
+JSONFormatter = require 'json-formatter-js'
 
-OPENED_LEVELS = 2
-VIEWER_CONFIG =
-  hoverPreviewEnabled: yes
+
 
 EXAMPLES = [
   """
   x := 0;
-  if x < 1 then
+  if !x < 1 then
     y := !x
   else
     y := 1
@@ -22,22 +21,32 @@ EXAMPLES = [
   """
 ]
 
-#obj = ans:42
-#formatter = new JSONFormatter obj, OPENED_LEVELS, VIEWER_CONFIG
-#document.body.appendChild formatter.render()
+jsonViewer = (obj) ->
+  formatter = new JSONFormatter obj, openedLevels=1, hoverPreviewEnabled: yes
+  formatter.render()
+
+
+parseProgram = ->
+  program = $('#program-input').text()
+  parsed = parse program
+  $ '#parse-output'
+    .html jsonViewer(parsed)
+  # TODO: catch error and show line number
+
 
 loadExample = (nr) ->
   $ '#program-input'
     .text EXAMPLES[nr]
+  parseProgram()
 
 
-for idx, program of EXAMPLES
-  console.log idx+1
+# List input examples
+for program, idx in EXAMPLES
   $ '<a>'
-    .text "example #{parseInt(idx) + 1}"
+    .text "example #{idx + 1}"
     .attr href: '#'
-    .click -> loadExample idx
+    .click do (idx) -> -> loadExample idx  # FIXME: refactor into shorter version
     .appendTo '#examples'
 
+# Load an initial example
 loadExample 0
-
