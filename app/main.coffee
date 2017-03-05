@@ -26,12 +26,16 @@ jsonViewer = (obj) ->
   formatter.render()
 
 
+# React to program input box change
 parseProgram = ->
-  program = $('#program-input').text()
+  program = $('#program-input').val()
   parsed = parse program
   $ '#parse-output'
     .html jsonViewer(parsed)
   # TODO: catch error and show line number
+
+$ '#program-input'
+  .keyup -> parseProgram()
 
 
 loadExample = (nr) ->
