@@ -29,27 +29,59 @@ jsonViewer = (obj) ->
   formatter.render()
 
 
-showState = (nr) ->
-  states = evaluate @parsed
-  if nr is 'last'
-    nr = states.length - 1
+currStateBox = $ '#current-state'
 
-  console.log states[nr]
+# Fill evaluation output box
+showState = (idx) ->
+  if idx is 'last'
+    idx = @states.length - 1
+
+  currIdx = +currStateBox.val() - 1
+  if idx is 'prev'
+    idx = currIdx - 1
+  if idx is 'next'
+    idx = currIdx + 1
+
+  # Update if set programatically
+  if +currStateBox.val() isnt idx+1
+    currStateBox.val idx+1
+
   $ '#evaluation-output'
-    .html jsonViewer states[nr]
+    .html jsonViewer @states[idx]
+
+
+# React to input box change
+currStateBox
+  .change ->
+    nr = currStateBox.val()
+    showState +nr - 1
+
+$('#prev-state').click -> showState('prev')
+$('#next-state').click -> showState('next')
+
+
+setupStates = (parsed) ->
+  @states = evaluate parsed
+  $ '#nr-states'
+    .text @states.length
+  $ '#current-state'
+    .attr max: @states.length
+
+  # Initially, show the final state
+  showState 'last'
 
 
 
 # React to program input box change
 parseProgram = ->
   program = $('#program-input').val()
-  @parsed = parse program
+  parsed = parse program
   $ '#parse-output'
     .html jsonViewer parsed
   # TODO: catch error and show line number
 
-  # Show last state
-  showState 'last'
+  # Make evaluation box react
+  setupStates parsed
 
 # Set event listener
 $ '#program-input'
