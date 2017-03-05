@@ -9,13 +9,13 @@ Parser Generator: [nearley](http://nearley.js.org) ([online playground](https://
 
 TODO: add nearley to de dependencies
 
-- `npm i`
-- generate grammar: `node_modules/nearley/bin/nearleyc.js parser.ne > grammar.js`
+- download dependencies: `npm install`
+- generate grammar: `node_modules/nearley/bin/nearleyc.js parser.ne > grammar.coffee`
+- compile coffee-script: `node_modules/coffee-script/bin/coffee --compile --map .`
 
 # Test
 
-- semantics: `node_modules/jasmine/bin/jasmine.js tests/semantics.js`
-- syntax: `node_modules/jasmine/bin/jasmine.js tests/semantics.js`
+`node_modules/jasmine/bin/jasmine.js tests/syntax.js tests/semantics.js`
 
 
 # Run

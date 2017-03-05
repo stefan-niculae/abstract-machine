@@ -20,6 +20,7 @@
     "nearley": "^2.7.14"
   },
   "devDependencies": {
+    "coffee-script": "^1.12.4",
     "jasmine": "^2.5.3"
   }
 }
