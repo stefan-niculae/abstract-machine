@@ -7,7 +7,7 @@ Parser Generator: [nearley](http://nearley.js.org) ([online playground](https://
 
 
 # Build
-- download dependencies: `npm install` TODO: add nearley to de dependencies
+- download dependencies: `npm install`
 - fix nearley script: `curl https://raw.githubusercontent.com/Hardmath123/nearley/master/lib/nearley.js > node_modules/nearley/lib/nearley.js`
 - bundle scripts: `node_modules/.bin/webpack`
 
