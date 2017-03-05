@@ -1,6 +1,8 @@
 $ = require 'jquery'
-parse = require '../src/parser'
 JSONFormatter = require 'json-formatter-js'
+
+parse = require '../src/parser'
+{evaluate} = require '../src/evaluator'
 
 
 
@@ -21,23 +23,40 @@ EXAMPLES = [
   """
 ]
 
+# Wrapper
 jsonViewer = (obj) ->
-  formatter = new JSONFormatter obj, openedLevels=1, hoverPreviewEnabled: yes
+  formatter = new JSONFormatter obj, openedLevels=2, hoverPreviewEnabled: yes
   formatter.render()
+
+
+showState = (nr) ->
+  states = evaluate @parsed
+  if nr is 'last'
+    nr = states.length - 1
+
+  console.log states[nr]
+  $ '#evaluation-output'
+    .html jsonViewer states[nr]
+
 
 
 # React to program input box change
 parseProgram = ->
   program = $('#program-input').val()
-  parsed = parse program
+  @parsed = parse program
   $ '#parse-output'
-    .html jsonViewer(parsed)
+    .html jsonViewer parsed
   # TODO: catch error and show line number
 
+  # Show last state
+  showState 'last'
+
+# Set event listener
 $ '#program-input'
   .keyup -> parseProgram()
 
 
+# Fill program input box
 loadExample = (nr) ->
   $ '#program-input'
     .text EXAMPLES[nr]

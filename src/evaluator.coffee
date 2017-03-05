@@ -137,4 +137,4 @@ finalState = (program) ->
 
 
 
-module.exports = {trans, finalState}
+module.exports = {trans, evaluate, finalState}
