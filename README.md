@@ -13,7 +13,8 @@ Demo: TODO
 
 ## Dev
 - Generate grammar: `node_modules/.bin/nearleyc src/grammar.ne > src/grammar.coffee`
-- Compile coffee-script: `node_modules/.bin/coffee --compile --map .`
+- Compile CoffeeScript: `node_modules/.bin/coffee --compile --map .`
+- Compile Sass: `sass app/style.sass > app/style.css` TODO: add sass-loader to webpack
 
 Nearley playground: https://omrelli.ug/nearley-playground
 

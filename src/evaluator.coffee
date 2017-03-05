@@ -122,13 +122,18 @@ trans = ({c, s, m}) ->
 
 
 evaluate = (program) ->
-  state =  # initial, empty state
+  current =  # initial, empty state
     c: [program]
     s: []
     m: {}
+  states = [current]
 
   # Repeatedly apply the transition function, returning the state at each step
-  state = trans(state) while state.c.length > 0
+  while current.c.length > 0
+    current = trans(current)
+    states.push current
+
+  return states
 
 
 finalState = (program) ->
