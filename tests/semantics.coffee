@@ -1,4 +1,4 @@
-{trans, finalState} = require './../src/evaluator'
+{trans, finalState} = require '../src/evaluator'
 
 
 

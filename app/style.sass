@@ -1,0 +1,39 @@
+$box-min-height: 150px
+$off-black: #191919
+$off-white: #fdfdfd
+
+body
+  max-width: 800px
+  margin: auto
+  font-family: "Open Sans", sans-serif
+  background-color: $off-white
+
+header
+  font-size: 2em
+  margin-top: 1.5em
+  margin-bottom: .25em
+
+
+#program-input,
+#parse-output,
+#evaluation-output
+  min-height: $box-min-height
+  border-radius: 3px
+  border: .5px solid #c8c8c8
+  box-shadow: 0 0 5px 2px rgba(0,0,0, 0.1)
+
+#program-input
+  width: 100%
+  font-family: Consolas, monospace
+  font-size: 1em
+  padding: 5px 10px
+  color: $off-black
+
+#examples a
+  color: $off-black
+  //text-decoration: underline
+  margin-right: .5em
+
+#parse-output,
+#evaluation-output
+  background-color: white

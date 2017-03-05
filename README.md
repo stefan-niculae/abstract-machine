@@ -5,25 +5,25 @@ Control stack, Work stack, Memory model of execution
 Demo: TODO
 
 
-# Build
-- download dependencies: `npm install`
-- fix nearley script: `curl https://raw.githubusercontent.com/Hardmath123/nearley/master/lib/nearley.js > node_modules/nearley/lib/nearley.js`
-- bundle scripts: `node_modules/.bin/webpack`
+## Build
+- Download dependencies: `npm install`
+- Fix nearley script: `curl https://raw.githubusercontent.com/Hardmath123/nearley/master/lib/nearley.js > node_modules/nearley/lib/nearley.js`
+- Bundle scripts: `node_modules/.bin/webpack`
 
 
-# Dev
-- generate grammar: `node_modules/.bin/nearleyc src/grammar.ne > src/grammar.coffee`
-- compile coffee-script: `node_modules/.bin/coffee --compile --map .`
+## Dev
+- Generate grammar: `node_modules/.bin/nearleyc src/grammar.ne > src/grammar.coffee`
+- Compile coffee-script: `node_modules/.bin/coffee --compile --map .`
 
 Nearley playground: https://omrelli.ug/nearley-playground
 
 
-# Test
-`node_modules/.bin/jasmine tests/syntax.js tests/semantics.js`
+## Test
+- `node_modules/.bin/jasmine tests/syntax.js tests/semantics.js`
 
 
-# Run
-open `visualization/page.html`
+## Run
+Open `app/page.html`
 
 
 
