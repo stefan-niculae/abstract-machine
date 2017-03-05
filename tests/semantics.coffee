@@ -1,4 +1,4 @@
-trans = require './../evaluator'
+{trans, finalState} = require './../evaluator'
 
 
 
@@ -290,3 +290,16 @@ describe 'The transition function for branching and looping', ->
       c: [cond, {type:'while', cond, body:'()'}, '()']
       s: [8]
       m: {}
+
+
+
+describe 'The evaluation function', ->
+
+  it 'can do sequencing', ->
+    result = finalState
+      type: 'seq'
+      s1: {type: 'assign', var: 'x', val: 1}
+      s2: {type: 'assign', var: 'x', val: 2}
+
+    expect(result.c).toEqual []
+    expect(result.m).toEqual {x: 2}

@@ -117,20 +117,24 @@ trans = ({c, s, m}) ->
     else
       return {c:t, s:st, m}
 
-#  {c, s, m}
+  throw new Error("#{h} didn't match anything for transition")
 
 
 
+evaluate = (program) ->
+  state =  # initial, empty state
+    c: [program]
+    s: []
+    m: {}
+
+  # Repeatedly apply the transition function, returning the state at each step
+  state = trans(state) while state.c.length > 0
+
+
+finalState = (program) ->
+  states = evaluate program
+  states[states.length - 1]
 
 
 
-emptyState =
-  c: []
-  s: []
-  m: {}
-
-
-
-
-
-module.exports = trans
+module.exports = {trans, finalState}

@@ -1,11 +1,4 @@
-nearley = require '../nearley' # TODO: import it from npm instead of the local one
-grammar = require '../grammar'
-
-# Generate a fresh parser
-parseResults = (input) ->
-  parser = new nearley.Parser(grammar.ParserRules, grammar.ParserStart)
-  parser.feed input
-  return parser.results[0]
+parse = require '../parser'
 
 
 # TODO: debug grammar (where Main -> Expr, Cond)?
@@ -13,19 +6,19 @@ describe 'The parser for literals', ->
 
   it 'can parse an int', ->
     input = '7'
-    expect(parseResults(input)).toEqual 7
+    expect(parse(input)).toEqual 7
 
   it 'can parse a float', ->
     input = '7.5'
-    expect(parseResults(input)).toEqual 7.5
+    expect(parse(input)).toEqual 7.5
 
   it 'can parse `true`', ->
     input = 'true'
-    expect(parseResults(input)).toEqual true
+    expect(parse(input)).toEqual true
 
   it 'can parse `false`', ->
     input = 'false'
-    expect(parseResults(input)).toEqual false
+    expect(parse(input)).toEqual false
 
 
 
@@ -34,7 +27,7 @@ describe 'The parser for conditions & expressions', ->
 
   it 'can parse a boolean condition', ->
     input = '0 < 1'
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'cond'
       e1: 0
       op: '<'
@@ -42,7 +35,7 @@ describe 'The parser for conditions & expressions', ->
 
   it 'can parse an arithmetic expression', ->
     input = '1 + 2'
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'expr'
       e1: 1
       op: '+'
@@ -50,13 +43,13 @@ describe 'The parser for conditions & expressions', ->
 
   it 'can parse dereferencing', ->
     input = '!var'
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'valof'
       var: 'var'
 
   it 'does correct order of operations (a + b/c)', ->
     input = '4 + 6/2'
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'expr'
       e1: 4
       op: '+'
@@ -69,7 +62,7 @@ describe 'The parser for conditions & expressions', ->
   # TODO
 #  it 'does correct order of operations (a/b + c)', ->
 #    input = '4/2 + 6'
-#    expect(parseResults(input)).toEqual
+#    expect(parse(input)).toEqual
 #      type: 'expr'
 #      e1:
 #        type: 'expr'
@@ -81,7 +74,7 @@ describe 'The parser for conditions & expressions', ->
 
   it 'does arith expr parens (div)', ->
     input = '4 + (6/2)'
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'expr'
       e1: 4
       op: '+'
@@ -94,7 +87,7 @@ describe 'The parser for conditions & expressions', ->
 
   it 'does arith expr parens (plus)', ->
     input = '(4+6) / 2'
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'expr'
       e1:
         type: 'expr'
@@ -107,7 +100,7 @@ describe 'The parser for conditions & expressions', ->
   # TODO: currently they bind to the left
 #  it 'sequences operations to the right', ->
 #    input = '10 / 2 * 4' # ~> (10/2) * 4
-#    expect(parseResults(input)).toEqual
+#    expect(parse(input)).toEqual
 #      type: 'expr'
 #      e1:
 #        type: 'expr'
@@ -124,18 +117,18 @@ describe 'The parser for commands', ->
 
   it 'can parse `skip`', ->
     input = '()'
-    expect(parseResults(input)).toEqual '()'
+    expect(parse(input)).toEqual '()'
 
   it 'can parse literal assignment', ->
     input = 'var := 0'
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'assign'
       var: 'var'
       val: 0
 
   it 'can parse expression assignment', ->
     input = 'x := !y + 1'
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'assign'
       var: 'x'
       val:
@@ -149,16 +142,16 @@ describe 'The parser for commands', ->
   # TODO
 #  it "doesn't allow keyword assignment", ->
 #    input = 'false := 5'
-#    expect(-> parseResults(input)).toThrowError "false is a keyword, it can't be used as a variable name"
+#    expect(-> parse(input)).toThrowError "false is a keyword, it can't be used as a variable name"
 
   # TODO
 #  it "doesn't allow keyword comparison", ->
 #    input = '!while < 5'
-#    expect(-> parseResults(input)).toThrowError "while is a keyword, it can't be used as a variable name"
+#    expect(-> parse(input)).toThrowError "while is a keyword, it can't be used as a variable name"
 
   it 'can parse sequenced statements', ->
     input = 'x := 0; ()'
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'seq'
       s1:
         type: 'assign'
@@ -172,7 +165,7 @@ describe 'The parser for commands', ->
 
       y := 1
     """
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: "seq"
       s1:
         type: "assign"
@@ -191,7 +184,7 @@ describe 'The parser for control structures', ->
 
   it 'can parse an if statement', ->
     input = 'if true then () else x := 0'
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'if'
       cond: true
       st: '()'
@@ -202,7 +195,7 @@ describe 'The parser for control structures', ->
 
   it 'can parse a while statement', ->
     input = 'while false do ()'
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'while'
       cond: false
       body: '()'
@@ -215,7 +208,7 @@ describe 'The parser for control structures', ->
       else
         ()
     """
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'while'
       cond: false
       body:
@@ -233,7 +226,7 @@ describe 'The parser for control structures', ->
       ()
     }
     """
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'if'
       cond: true
       st: '()'
@@ -246,7 +239,7 @@ describe 'The parser for control structures', ->
       ()
     }
     """
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'while'
       cond: true
       body:
@@ -260,7 +253,7 @@ describe 'The parser for control structures', ->
         ();
     ()
     """
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'seq'
       s1:
         type: 'while'
@@ -278,7 +271,7 @@ describe 'The parser for more complex programs', ->
       x := !x - 1
     }
     """
-    expect(parseResults(input)).toEqual
+    expect(parse(input)).toEqual
       type: 'while'
       cond: type: 'cond', e1: 0, op: '<=', e2: {type: 'valof', var: 'x'}
       body:

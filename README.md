@@ -10,7 +10,7 @@ Parser Generator: [nearley](http://nearley.js.org) ([online playground](https://
 TODO: add nearley to de dependencies
 
 - download dependencies: `npm install`
-- generate grammar: `node_modules/nearley/bin/nearleyc.js parser.ne > grammar.coffee`
+- generate grammar: `node_modules/nearley/bin/nearleyc.js parser-generator.ne > grammar.coffee`
 - compile coffee-script: `node_modules/coffee-script/bin/coffee --compile --map .`
 
 # Test
