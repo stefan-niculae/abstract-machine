@@ -2,8 +2,7 @@
 
 Control stack, Work stack, Memory model of execution
 
-Parser Generator: [nearley](http://nearley.js.org) ([online playground](https://omrelli.ug/nearley-playground/))
-
+Demo: TODO
 
 
 # Build
@@ -15,6 +14,8 @@ Parser Generator: [nearley](http://nearley.js.org) ([online playground](https://
 # Dev
 - generate grammar: `node_modules/.bin/nearleyc src/grammar.ne > src/grammar.coffee`
 - compile coffee-script: `node_modules/.bin/coffee --compile --map .`
+
+Nearley playground: https://omrelli.ug/nearley-playground
 
 
 # Test
@@ -29,6 +30,7 @@ open `visualization/page.html`
 ## IMP Language
 
 Simple imperative language
+TODO: latex
 
 ### BNF Syntax
 
