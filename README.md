@@ -10,7 +10,13 @@ Parser Generator: [nearley](http://nearley.js.org) ([online playground](https://
 TODO: add nearley to de dependencies
 
 - `npm i`
-- `nearleyc parser.ne > grammar.js`
+- generate grammar: `node_modules/nearley/bin/nearleyc.js parser.ne > grammar.js`
+
+# Test
+
+- semantics: `node_modules/jasmine/bin/jasmine.js tests/semantics.js`
+- syntax: `node_modules/jasmine/bin/jasmine.js tests/semantics.js`
+
 
 # Run
 

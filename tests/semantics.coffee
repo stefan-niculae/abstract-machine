@@ -1,4 +1,4 @@
-trans = require './evaluator'
+trans = require './../evaluator'
 
 
 

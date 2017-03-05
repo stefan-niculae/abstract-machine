@@ -1,9 +1,9 @@
 #@preprocessor coffee
 
-@{% function isKeyword(x) { return ['true', 'false', 'if', 'then', 'else', 'while', 'do']} %}
+@{% function isKeyword(x) { return ['true', 'false', 'if', 'then', 'else', 'while', 'do'].indexOf(x) != -1} %}
 @{% function strip(d) { return d.filter(function(x) {return x !== null}) }%}
 @{% function striphead(d) {return strip(d)[0]} %}
-# TODO function composition
+# TODO function composition?
 
 
 # A program
@@ -40,7 +40,7 @@ IOp -> "*"  {% id %}
 	 | "/"  {% id %}
 	 | "+"  {% id %}
 	 | "-"  {% id %}
-	 #| "%"  {% id %}
+#    | "%"  {% id %}
 
 # Boolean Operators
 BOp -> "==" {% id %}
@@ -69,7 +69,8 @@ Int   -> [0-9]:+     {% function(d) { return parseInt  (d[0].join(''))     } %}
 
 
 # Variable (alphanumeric & underscores)
-Var -> [\w_]:+       {% function(d) { return d[0].join('') } %}
+Var -> [\w_]:+      {% function(d) {return d[0].join('')
+}%} #{% function(d) { var name=d[0].join(''); if(isKeyword(name)) throw new Error(name + " is a keyword, it can't be used as a variable name"); return name  } %}
 # TODO check if not in keywords!
 
 

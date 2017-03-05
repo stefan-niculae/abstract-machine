@@ -3,7 +3,7 @@ func =
   '+': (a, b) -> a + b
   '-': (a, b) -> a - b
   '*': (a, b) -> a * b
-  '/': (a, b) -> a / b
+  '/': (a, b) -> a / b # TODO: check for division by zero!
   '%': (a, b) -> a % b
 
   # bop
