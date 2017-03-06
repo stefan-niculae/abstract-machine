@@ -3,7 +3,6 @@ parse = require '../src/parser'
 
 
 
-# TODO: debug grammar (where Main -> Expr, Cond)?
 describe 'The parser for literals', ->
 
   it 'can parse an int', ->
@@ -21,6 +20,10 @@ describe 'The parser for literals', ->
   it 'can parse `false`', ->
     input = 'false'
     expect(parse(input)).toEqual false
+
+  it 'does not allow variables starting with a digit', ->
+    input = '1var = 0'
+    expect(-> parse(input)).toThrowError
 
   # TODO: test for var starting with number to error
 

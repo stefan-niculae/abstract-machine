@@ -10,8 +10,8 @@
 
 # A program
 Main -> _ Stmt _ {% striphead %}
-      | _ Expr _ {% striphead %} # DEBUG, to remove
-      | _ Cond _ {% striphead %} # DEBUG, to remove
+      | _ Expr _ {% striphead %}
+      | _ Cond _ {% striphead %}
 
 # Statement
 Stmt -> "()"              {% -> new Skip %}
