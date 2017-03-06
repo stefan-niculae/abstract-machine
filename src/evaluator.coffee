@@ -183,15 +183,6 @@ trans = ({c, s, m}) ->
           return idx
     return -1
 
-  if head instanceof Break
-    # Skip up to the while AND the While statement
-    remaining = c[indexOfWhile(inclusive=true)...]
-
-    return {
-      c: remaining
-      s
-      m
-    }
 
   if head instanceof Continue
   # Skip up to the while BUT leave the While statement
@@ -203,6 +194,15 @@ trans = ({c, s, m}) ->
       m
     }
 
+  if head instanceof Break
+# Skip up to the while AND the While statement
+    remaining = c[indexOfWhile(inclusive=true)...]
+
+    return {
+      c: remaining
+      s
+      m
+    }
 
 
   throw new Error("#{head} didn't match anything for transition")
