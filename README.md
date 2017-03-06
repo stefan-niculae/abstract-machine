@@ -38,6 +38,7 @@ Open `app/page.html`
 ## TODO
 Next:
 - break, continue, exit
+- editor numbers & syntax highlighting (codemirror & coffeescript syntax)
 - syntax & runtime errors
 - explanation for each evaluation step
 

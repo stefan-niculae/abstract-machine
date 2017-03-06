@@ -1,4 +1,4 @@
-{Assign, Seq, If, While, ValOf, Expr, Cond, Action} = require './types'
+{Assign, Seq, If, While, ValOf, Expr, Cond, Save, Branch, Loop, Skip} = require './types'
 
 func =
   # iop
@@ -77,15 +77,15 @@ trans = ({c, s, m}) ->
 
 
   # Skip
-  if h is '()'
+  if h instanceof Skip
     return {c:t, s, m}
 
   # AtribC
   if h instanceof Assign
-    return { c:[h.value, 'assign', t...], s:[h.var, s...], m }
+    return { c:[h.value, new Save, t...], s:[h.var, s...], m }
 
   # Atrib
-  if h is 'assign'
+  if h instanceof Save
     [n, v, st...] = s
     newMem = clone m # maintain immutability of memory from call to call
     newMem[v] = n # TODO fix for   x := !x - 1
@@ -93,11 +93,10 @@ trans = ({c, s, m}) ->
 
   # CondC
   if h instanceof If
-    # Use 'branch' as a command symbol in C to differentiate it from the statement 'if'
-    return { c:[h.cond, 'branch', t...], s:[h.st, h.sf, s...], m }
+    return { c:[h.cond, new Branch, t...], s:[h.st, h.sf, s...], m }
 
   # CondT, CondF
-  if h is 'branch'
+  if h instanceof Branch
     [b, stmtT, stmtF, st...] = s
     comm = if b then stmtT else stmtF
     return { c:[comm, t...], s:st, m }
@@ -109,10 +108,10 @@ trans = ({c, s, m}) ->
 
   # IterC
   if h instanceof While
-    return { c:[h.cond, 'loop', t...], s:[h.cond, h.body, s...], m }
+    return { c:[h.cond, new Loop, t...], s:[h.cond, h.body, s...], m }
 
   # IterT, IterF
-  if h is 'loop'
+  if h instanceof Loop
     [loopAgain, cond, body, st...] = s
     if loopAgain
       whileStmt = new While {cond, body}

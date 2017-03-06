@@ -1,5 +1,6 @@
 parse = require '../src/parser'
-{Assign, Seq, If, While, ValOf, Expr, Cond} = require '../src/types'
+{Assign, Seq, If, While, ValOf, Expr, Cond, Skip} = require '../src/types'
+
 
 
 # TODO: debug grammar (where Main -> Expr, Cond)?
@@ -106,7 +107,7 @@ describe 'The parser for commands', ->
 
   it 'can parse `skip`', ->
     input = '()'
-    expect(parse(input)).toEqual '()'
+    expect(parse(input)).toEqual new Skip
 
   it 'can parse literal assignment', ->
     input = 'var = 0'
@@ -140,7 +141,7 @@ describe 'The parser for commands', ->
       s1: new Assign
         var: 'x'
         value: 0
-      s2: '()'
+      s2: new Skip
 
   it 'can parse sequencing with newlines', ->
     input = """
@@ -166,7 +167,7 @@ describe 'The parser for control structures', ->
     input = 'if true then () else x = 0'
     expect(parse(input)).toEqual new If
       cond: true
-      st: '()'
+      st: new Skip
       sf: new Assign
         var: 'x'
         value: 0
@@ -175,7 +176,7 @@ describe 'The parser for control structures', ->
     input = 'while false do ()'
     expect(parse(input)).toEqual new While
       cond: false
-      body: '()'
+      body: new Skip
 
   it 'can parse nested control statements', ->
     input = """
@@ -189,8 +190,8 @@ describe 'The parser for control structures', ->
       cond: false
       body: new If
         cond: true
-        st: '()'
-        sf: '()'
+        st: new Skip
+        sf: new Skip
 
   it 'accepts braces for if statements', ->
     input = """
@@ -203,8 +204,8 @@ describe 'The parser for control structures', ->
     """
     expect(parse(input)).toEqual new If
       cond: true
-      st: '()'
-      sf: '()'
+      st: new Skip
+      sf: new Skip
 
   it 'accepts braces for while statements', ->
     input = """
@@ -216,8 +217,8 @@ describe 'The parser for control structures', ->
     expect(parse(input)).toEqual new While
       cond: true
       body: new Seq
-        s1: '()'
-        s2: '()'
+        s1: new Skip
+        s2: new Skip
 
   it 'binds only the first statement after to the while (when no braces)', ->
     input = """
@@ -228,8 +229,8 @@ describe 'The parser for control structures', ->
     expect(parse(input)).toEqual new Seq
       s1: new While
         cond: true
-        body: '()'
-      s2: '()'
+        body: new Skip
+      s2: new Skip
 
 
 describe 'The parser for more complex programs', ->
@@ -290,4 +291,3 @@ describe 'The parser for more complex programs', ->
         sf: new Assign
           var: 'min'
           value: new ValOf var: 'b'
-
