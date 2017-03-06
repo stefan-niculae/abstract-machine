@@ -16,6 +16,14 @@ The app behaviour lies in 'app/interface', the layout in 'app/page' and the form
 ## Demo
 Online: http://stefan1niculae.github.io/abstract-machine
 
+
+
+<center>
+
+![demo](app/demo.gif)
+
+</center>
+
 Inspect the results of parsing your program and its configuration state after each step of execution.
 Provides error messages and guards against infinite cycles and division by zero.
 
