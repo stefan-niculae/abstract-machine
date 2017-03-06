@@ -48,7 +48,7 @@ class If
 class While
   constructor: ({@cond, @body}) ->
     assertType @cond, Cond, Boolean
-    assertType @body, If, While, Seq, Assign, Skip
+    assertType @body, If, While, Seq, Assign, Skip, Break, Continue, Exit
 
 class ValOf
   # Intentionally not flat for better readability

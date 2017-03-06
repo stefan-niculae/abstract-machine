@@ -1,6 +1,7 @@
 parse = require '../src/parser'
 {Assign, Seq, If, While, ValOf, Expr, Cond, Skip, Break, Continue, Exit} = require '../src/types'
 
+# TODO tests for break & continue
 
 
 describe 'The parser for literals', ->

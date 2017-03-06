@@ -1,6 +1,7 @@
 {trans, finalState} = require '../src/evaluator'
 {Assign, Seq, If, While, ValOf, Expr, Cond, Save, Branch, Loop, Skip, Break, Continue, Exit} = require '../src/types'
 
+# TODO tests for break & continue & nested
 
 
 describe 'The transition function for arithmetic expressions', ->

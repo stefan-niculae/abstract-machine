@@ -50,7 +50,7 @@ Open `app/page.html`
 
 ## TODO
 Next:
-- break, continue
+- break & continue doc & tests
 - explanation for each evaluation step
 
 

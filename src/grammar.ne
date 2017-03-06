@@ -48,7 +48,7 @@ IOp -> "*"  {% id %}
 
 # Boolean Operators
 BOp -> "==" {% id %}
-     | "/=" {% id %}
+     | "!=" {% id %}
      | "<"  {% id %}
      | ">"  {% id %}
      | "<=" {% id %}
