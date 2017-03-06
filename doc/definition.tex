@@ -1,0 +1,92 @@
+\documentclass[11pt]{report}
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{bm}
+
+\definecolor{grey}{RGB}{150,150,150}
+
+% http://tex.stackexchange.com/questions/102299/automatic-line-break-for-writing-context-free-grammars
+\lstset{
+%  basicstyle=\itshape,
+  xleftmargin=1em,
+  keywordstyle=\itshape,
+morekeywords={a,int,float,true,false,string,if,then,else,while,do,z},
+  literate={->}{{ \textcolor{grey}{$\rightarrow$} }}{2}
+               {|}{{ \textcolor{grey}{$|$} }}{1}
+               {<<}{{ \textcolor{grey}{$\langle$} }}{1}
+               {>>}{{ \textcolor{grey}{$\rangle$} }}{1}
+}
+
+\begin{document}
+
+\thispagestyle{empty}
+\section*{Grammar}
+
+Non-terminals:
+  \begin{lstlisting}
+  Expr -> nr | Expr iop Expr | !var | ( E )
+  Cond -> bl | Expr bop Expr 
+  Stmt -> () | Stmt ; Stmt | var := Expr
+        | if Cond then Body else Body
+        | while Cond do Body
+  Body -> Stmt
+        | { Stmt }
+  \end{lstlisting}
+
+\vspace{3em}
+\noindent Terminals:
+    \begin{lstlisting}
+   iop -> +  | -  | * | / 
+   bop -> == | != | < | > | <= | >=
+   var -> <<string>>
+    nr -> <<int>> | <<float>>
+    bl -> true  | false
+  \end{lstlisting}
+
+
+
+
+
+\newpage
+\thispagestyle{empty} % no page number
+\section*{Rules}
+
+Arithmetic expressions $(E)$:
+\begin{align*}
+\langle n  \bm{c},  \bm{s},  \bm{m} \rangle  &\rightarrow   \langle  \bm{c}, n  \bm{s},  \bm{m} \rangle \\
+\langle !v  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  m(v),  \bm{s},  \bm{m} \rangle \\
+\langle (E_1\ iop \ E_2)  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle E_1\  E_2\  iop  \ \bm{c},  \bm{s},  \bm{m} \rangle \\
+\langle iop \ \bm{c}, n_2 n_1  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c}, n  \bm{s},  \bm{m} \rangle  \ \text{where} \ n = n_1\ \underline{iop} \ n_2 \\
+\end{align*}
+Boolean conditions $(C)$:
+\begin{align*}
+\langle b  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle b, n  \bm{s},  \bm{m} \rangle \\
+\langle (E_1 \ bop \ E_2)  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle E_1\ E_2\ bop \ \bm{c},  \bm{s},  \bm{m} \rangle \\
+\langle bop \  \bm{c}, n_2 n_1  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c}, b  \bm{s},  \bm{m} \rangle \  \text{where} \ b = n_1\ \underline{bop}\ n_2\\
+\end{align*}
+Statements $(S)$:
+\begin{align*}
+\langle ()  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  \bm{s},  \bm{m} \rangle \\
+\langle (S_1 ; S_2)  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle S_1 S_2  \bm{c},  \bm{s},  \bm{m} \rangle \\
+\langle v:=E  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle E :=  \bm{c}, v  \bm{s},  \bm{m} \rangle \\
+\langle :=  \bm{c}, n v  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  \bm{s},  \bm{m}[v=n] \rangle \\
+\end{align*}
+Branching $(if)$:
+\begin{align*}
+\langle (if\ C\ then\ S_t\ else\ S_f)  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle C\ branch\  \bm{c}, S_t S_f  \bm{s},  \bm{m} \rangle \\
+\langle branch\  \bm{c}, true\  S_t S_f  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle S_t  \bm{c},  \bm{s},  \bm{m} \rangle \\
+\langle branch\  \bm{c}, false\ S_t S_f  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle S_f  \bm{c},  \bm{s},  \bm{m} \rangle \\
+\end{align*}
+Looping $(while)$:
+\begin{align*}
+\langle (while\ C\ do\ S)  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow  \langle C\ loop\  \bm{c}, C S  \bm{s},  \bm{m} \rangle \\
+\langle loop\  \bm{c}, false\ C S  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  \bm{s},  \bm{m} \rangle \\
+\langle loop\  \bm{c}, true\  C S  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle S (while\ C\ do\ S)  \bm{c},  \bm{s},  \bm{m} \rangle 
+\end{align*}
+
+
+
+
+\end{document}
