@@ -82,6 +82,13 @@ describe 'The transition function for int expressions', ->
       s: [0.5]
       m: {}
 
+  it 'cannot divide by zero', ->
+    state =
+      c: ['/']
+      s: [1, 0]
+      m: {}
+    expect(-> trans(state)).toThrowError 'division by zero'
+
   it 'can do modulus', ->
     state =
       c: ['%', new Skip]
