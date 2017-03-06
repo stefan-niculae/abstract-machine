@@ -31,14 +31,14 @@ Non-terminals:
   Stmt -> () | Stmt ; Stmt | var = Expr
         | if Cond then Body else Body
         | while Cond do Body
-        | break! | continue! | exit!
+        | continue! | break! | exit!
   Body -> Stmt | { Stmt }
   \end{lstlisting}
 
 \vspace{3em}
 \noindent Terminals:
     \begin{lstlisting}
-   iop -> +  | -  | * | / 
+   iop -> +  | -  | * | /
    bop -> == | != | < | > | <= | >=
    var -> <<string>>
     nr -> <<int>> | <<float>>
@@ -58,28 +58,40 @@ Arithmetic expressions $(E)$:
 \langle n  \bm{c},  \bm{s},  \bm{m} \rangle  &\rightarrow   \langle  \bm{c}, n  \bm{s},  \bm{m} \rangle \\
 \langle v  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  m(v),  \bm{s},  \bm{m} \rangle \\
 \langle (E_1\ iop \ E_2)  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle E_1\  E_2\  iop  \ \bm{c},  \bm{s},  \bm{m} \rangle \\
-\langle iop \ \bm{c}, n_2 n_1  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c}, n  \bm{s},  \bm{m} \rangle  \ \text{where} \ n = n_1\ \underline{iop} \ n_2 \\
+\langle iop \ \bm{c}, n_2 n_1  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c}, n  \bm{s},  \bm{m} \rangle  \ \text{where} \ n = n_1\ \underline{iop} \ n_2
 \end{align*}
-Boolean conditions $(C)$:
+
+\vspace{1em}
+\noindent Boolean conditions $(C)$:
 \begin{align*}
 \langle b  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle b, n  \bm{s},  \bm{m} \rangle \\
 \langle (E_1 \ bop \ E_2)  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle E_1\ E_2\ bop \ \bm{c},  \bm{s},  \bm{m} \rangle \\
-\langle bop \  \bm{c}, n_2 n_1  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c}, b  \bm{s},  \bm{m} \rangle \  \text{where} \ b = n_1\ \underline{bop}\ n_2\\
+\langle bop \  \bm{c}, n_2 n_1  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c}, b  \bm{s},  \bm{m} \rangle \  \text{where} \ b = n_1\ \underline{bop}\ n_2
 \end{align*}
-Statements $(S)$:
+
+\vspace{1em}
+\noindent Statements $(S)$:
 \begin{align*}
 \langle ()  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  \bm{s},  \bm{m} \rangle \\
 \langle (S_1 ; S_2)  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle S_1 S_2  \bm{c},  \bm{s},  \bm{m} \rangle \\
 \langle v=E  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle E\ save\  \bm{c}, v  \bm{s},  \bm{m} \rangle \\
 \langle save \  \bm{c}, n v  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  \bm{s},  \bm{m}[v=n] \rangle \\
+\langle continue \  \bm{c}, \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c'},  \bm{s},  \bm{m} \rangle \\
+\langle break \  \bm{c}, \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c''},  \bm{s},  \bm{m} \rangle
 \end{align*}
-Branching $(if)$:
+where $\bm{c'}$ are the commands up to the first $while$ \\
+and $\bm{c''}$ are the commands up to the first $while$ (inclusive)
+
+\vspace{1em}
+\noindent Branching $(if)$:
 \begin{align*}
 \langle (if\ C\ then\ S_t\ else\ S_f)  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle C\ branch\  \bm{c}, S_t S_f  \bm{s},  \bm{m} \rangle \\
 \langle branch\  \bm{c}, true\  S_t S_f  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle S_t  \bm{c},  \bm{s},  \bm{m} \rangle \\
-\langle branch\  \bm{c}, false\ S_t S_f  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle S_f  \bm{c},  \bm{s},  \bm{m} \rangle \\
+\langle branch\  \bm{c}, false\ S_t S_f  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle S_f  \bm{c},  \bm{s},  \bm{m} \rangle
 \end{align*}
-Looping $(while)$:
+
+\vspace{1em}
+\noindent Looping $(while)$:
 \begin{align*}
 \langle (while\ C\ do\ S)  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow  \langle C\ loop\  \bm{c}, C S  \bm{s},  \bm{m} \rangle \\
 \langle loop\  \bm{c}, false\ C S  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  \bm{s},  \bm{m} \rangle \\

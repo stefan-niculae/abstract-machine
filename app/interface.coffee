@@ -106,7 +106,6 @@ showState = (idx) ->
   evalOutput
     .removeClass 'info error'
     .html jsonViewer @states[idx]
-  # TODO: catch compilation error and show line number
 
 
 # React to input box change
@@ -162,7 +161,7 @@ parseProgram = ->
   program = programInput.val()
 
   # Handle empty input
-  if program.length == 0
+  if /^\s*$/.test program
     emptyInput()
     return
 
