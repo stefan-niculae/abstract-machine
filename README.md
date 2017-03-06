@@ -1,62 +1,11 @@
 # abstract-machine
 
-Control stack, Work stack, Memory model of execution.
+Control-stack, work-stack, memory execution model.
 
 For a triplet `<c, s, m>` we process commands in `c` one by one.
 We use the working stack `s` for evaluating expressions, conditions etc.
 The memory `m` holds the values of variables.
 
+Demo: online at https://stefan1niculae.github.io/abstract-machine/
 
-The syntax & rules are defined in `docs/definition`.
-The syntax is implemented in `src/grammar` and tested by `tests/syntax`.
-The semantics are implemented in `src/evaluator` and tested by `tests/semantics`.
-The types are defined in `src/types`.
-The app behaviour lies in 'app/interface', the layout in 'app/page' and the form in 'app/style'.
-
-Demo: TODO ghpages
-
-
-## Build
-- Download dependencies: `npm install`
-- Fix nearley script: `curl https://raw.githubusercontent.com/Hardmath123/nearley/master/lib/nearley.js > node_modules/nearley/lib/nearley.js`
-- Bundle scripts: `node_modules/.bin/webpack`
-
-
-## Dev
-- Generate grammar: `node_modules/.bin/nearleyc src/grammar.ne > src/grammar.coffee`
-- Compile CoffeeScript: `node_modules/.bin/coffee --compile --map .`
-- Compile Sass: `sass app/style.sass > app/style.css` TODO: add sass-loader to webpack
-
-Nearley playground: https://omrelli.ug/nearley-playground
-
-
-## Test
-- `node_modules/.bin/jasmine tests/syntax.js tests/semantics.js`
-
-
-## Run
-Open `app/page.html`
-
-
-## Bugs
-- Order of operations: `4 + 6/2` evaluates to `(4+6) / 2` (workaround: `4 + (6/2)` to get `7`)
-- Keywords: the following are treated as a variable name: `true, false, if, then, else, while, do, break, continue, exit`
-
-
-## TODO
-Next:
-- break, continue, exit
-- explanation for each evaluation step
-
-
-Future:
-- make remove trailing bang from `break! continue! exit!`
-- negative number literals
-- boolean variables
-- logical expressions (and, or, xor, not)
-- unary operators (++, -- etc)
-- more arithmetic operators (%, ^, +=, -= etc)
-- editor numbers & syntax highlighting (codemirror & coffeescript syntax)
-- more helpful error messages (including line number)
-- prettier visualization
-- newline for sequencing
+See source and more details at https://github.com/stefan1niculae/abstract-machine
