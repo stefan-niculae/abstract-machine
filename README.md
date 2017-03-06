@@ -31,7 +31,7 @@ Open `app/page.html`
 
 ## Bugs
 - Order of operations: `4 + 6/2` evaluates to `(4+6) / 2` (workaround: `4 + (6/2)` to get `7`)
-- Keywords: the following are treated as a variable name: `true, false, if, then, else, while, do`
+- Keywords: the following are treated as a variable name: `true, false, if, then, else, while, do, break, continue, exit`
 
 
 ## TODO
@@ -43,6 +43,7 @@ Next:
 
 
 Future:
+- make remove trailing bang from `break! continue! exit!`
 - negative number literals
 - boolean variables
 - logical expressions (and, or, xor, not)

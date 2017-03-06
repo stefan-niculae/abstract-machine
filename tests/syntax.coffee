@@ -1,5 +1,5 @@
 parse = require '../src/parser'
-{Assign, Seq, If, While, ValOf, Expr, Cond, Skip} = require '../src/types'
+{Assign, Seq, If, While, ValOf, Expr, Cond, Skip, Break, Continue, Exit} = require '../src/types'
 
 
 
@@ -157,6 +157,10 @@ describe 'The parser for commands', ->
       s2: new Assign
         var: "y"
         value: 1
+
+  it 'can parse the exit command', ->
+    input = 'exit!'
+    expect(parse(input)).toEqual new Exit
 
 
 

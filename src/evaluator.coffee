@@ -1,4 +1,4 @@
-{Assign, Seq, If, While, ValOf, Expr, Cond, Save, Branch, Loop, Skip} = require './types'
+{Assign, Seq, If, While, ValOf, Expr, Cond, Save, Branch, Loop, Skip, Break, Continue, Exit} = require './types'
 
 func =
   # iop
@@ -166,7 +166,14 @@ trans = ({c, s, m}) ->
         m
       }
 
-  throw new Error("#{head} didn't match anything for transition")
+  if head instanceof Exit
+    return {
+      c: tail
+      s
+      m
+    }
+
+  throw new Error("#{head} (keys: #{Object.keys(head).join(', ')} ) didn't match anything for transition")
 
 
 MAX_N_STATES = 1000
@@ -178,10 +185,17 @@ evaluate = (program) ->
     m: {}
   states = [current]
 
+  willExit = false
   # Repeatedly apply the transition function, returning the state at each step
   while current.c.length > 0
+    willExit = true if current.c[0] instanceof Exit
+
     current = trans(current)
     states.push current
+
+    if willExit
+      console.warn 'exiting'
+      break
 
     if states.length > MAX_N_STATES
       console.warn "maximum number of states reached (#{MAX_N_STATES}), stopping"

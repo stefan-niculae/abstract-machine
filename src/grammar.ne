@@ -1,7 +1,7 @@
 @preprocessor coffee
 @{% %} # fix for coffee preprocessor...
 
-@{% {Assign, Seq, If, While, ValOf, Expr, Cond, Skip} = require './types' %}
+@{% {Assign, Seq, If, While, ValOf, Expr, Cond, Skip, Break, Continue, Exit} = require './types' %}
 @{% isKeyword = (x) -> x in ['true', 'false', 'if', 'then', 'else', 'while', 'do'] %}
 @{% strip = (d) -> d.filter((x) -> x != null) %}
 @{% striphead = (d) -> strip(d)[0] %}
@@ -20,6 +20,9 @@ Stmt -> "()"              {% -> new Skip %}
                           {% (d) -> new If cond:d[2], st: d[6], sf:d[10] %}
       | "while" __ Cond __ "do" __ Body
                           {% (d) -> new While cond:d[2], body:d[6] %}
+      | "break!"          {% -> new Break %}
+      | "continue!"       {% -> new Continue %}
+      | "exit!"           {% -> new Exit %}
 Body -> Stmt              {% id %}
       | "{" _ Stmt _ "}"  {% (d) -> d[2] %} # optional brackets (both)
 # TODO: break, continue, exit

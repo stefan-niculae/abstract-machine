@@ -36,14 +36,14 @@ class Assign
 
 class Seq
   constructor: ({@s1, @s2}) ->
-    assertType @s1, If, While, Seq, Assign, Skip
-    assertType @s2, If, While, Seq, Assign, Skip
+    assertType @s1, If, While, Seq, Assign, Skip, Break, Continue, Exit
+    assertType @s2, If, While, Seq, Assign, Skip, Break, Continue, Exit
 
 class If
   constructor: ({@cond, @st, @sf}) ->
     assertType @cond, Cond, Boolean
-    assertType @st, If, While, Seq, Assign, Skip
-    assertType @sf, If, While, Seq, Assign, Skip
+    assertType @st, If, While, Seq, Assign, Skip, Break, Continue, Exit
+    assertType @sf, If, While, Seq, Assign, Skip, Break, Continue, Exit
 
 class While
   constructor: ({@cond, @body}) ->
@@ -77,5 +77,15 @@ class Loop
 
 class Skip
 
+class Break
 
-module.exports = {Assign, Seq, If, While, ValOf, Expr, Cond, Save, Branch, Loop, Skip}
+class Continue
+
+class Exit
+
+
+module.exports = {
+  Assign, Seq, If, While, ValOf, Expr, Cond,
+  Save, Branch, Loop, Skip,
+  Break, Continue, Exit
+}

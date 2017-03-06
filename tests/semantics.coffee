@@ -1,5 +1,5 @@
 {trans, finalState} = require '../src/evaluator'
-{Assign, Seq, If, While, ValOf, Expr, Cond, Save, Branch, Loop, Skip} = require '../src/types'
+{Assign, Seq, If, While, ValOf, Expr, Cond, Save, Branch, Loop, Skip, Break, Continue, Exit} = require '../src/types'
 
 
 
@@ -229,6 +229,16 @@ describe 'The transition function for commands', ->
       s: []
       m: {}
 
+  it 'halts on the exit command', ->
+    assignment = new Assign var: 'x', value: 1
+    result = finalState new Seq
+      s1: new Exit
+      s2: assignment
+    expect(result).toEqual
+      c: [assignment]
+      s: []
+      m: {}
+
 
 
 describe 'The transition function for branching and looping', ->
@@ -313,6 +323,7 @@ describe 'The evaluation function', ->
     expect(result.c).toEqual []
     expect(result.m).toEqual {x: 2}
 
+  # FIXME
   it 'guards against infinite cycles', ->
     state =
       c: [new While cond: true, body: new Skip]

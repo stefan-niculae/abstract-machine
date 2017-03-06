@@ -12,7 +12,7 @@
 %  basicstyle=\itshape,
   xleftmargin=1em,
   keywordstyle=\itshape,
-morekeywords={a,int,float,true,false,string,if,then,else,while,do,z},
+morekeywords={a,int,float,true,false,string,if,then,else,while,do,break!,continue!,exit!,z},
   literate={->}{{ \textcolor{grey}{$\rightarrow$} }}{2}
                {|}{{ \textcolor{grey}{$|$} }}{1}
                {<<}{{ \textcolor{grey}{$\langle$} }}{1}
@@ -31,6 +31,7 @@ Non-terminals:
   Stmt -> () | Stmt ; Stmt | var = Expr
         | if Cond then Body else Body
         | while Cond do Body
+        | break! | continue! | exit!
   Body -> Stmt | { Stmt }
   \end{lstlisting}
 
@@ -69,8 +70,8 @@ Statements $(S)$:
 \begin{align*}
 \langle ()  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  \bm{s},  \bm{m} \rangle \\
 \langle (S_1 ; S_2)  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle S_1 S_2  \bm{c},  \bm{s},  \bm{m} \rangle \\
-\langle v=E  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle E\ set\  \bm{c}, v  \bm{s},  \bm{m} \rangle \\
-\langle set \  \bm{c}, n v  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  \bm{s},  \bm{m}[v=n] \rangle \\
+\langle v=E  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle E\ save\  \bm{c}, v  \bm{s},  \bm{m} \rangle \\
+\langle save \  \bm{c}, n v  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  \bm{s},  \bm{m}[v=n] \rangle \\
 \end{align*}
 Branching $(if)$:
 \begin{align*}
