@@ -18,11 +18,11 @@ Online: http://stefan1niculae.github.io/abstract-machine
 
 
 
-<center>
+<p align="center">
 
-![demo](app/demo.gif)
+  <img src="https://github.com/stefan1niculae/abstract-machine/raw/master/app/demo.gif" alt="Demo Gif"/>
 
-</center>
+</p>
 
 Inspect the results of parsing your program and its configuration state after each step of execution.
 Provides error messages and guards against infinite cycles and division by zero.
