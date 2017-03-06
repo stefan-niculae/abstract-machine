@@ -8,19 +8,24 @@ parse = require '../src/parser'
 
 EXAMPLES = [
   """
-  x := 0;
-  if !x < 1 then
-    y := !x
+  x = 3;
+  while x > 0 do
+    x = x - 1
+  """, # FIXME!!!
+  """
+  x = 0;
+  if x < 1 then
+    y = x
   else
-    y := 1
+    y = 1
   """,
 
   """
-  x := 5;
-  sum := 0;
-  while !x > 0 do {
-    sum := !sum + !x;
-    x := !x - 1
+  x = 5;
+  sum = 0;
+  while x > 0 do {
+    sum := sum + x;
+    x := x - 1
   }
   """
 ]
@@ -50,6 +55,7 @@ showState = (idx) ->
   if +currStateBox.val() isnt idx+1
     currStateBox.val idx+1
 
+  # Fill output box
   $ '#evaluation-output'
     .html jsonViewer @states[idx]
   # TODO: catch compilation error and show line number
@@ -61,8 +67,12 @@ currStateBox
     nr = currStateBox.val()
     showState +nr - 1
 
-$('#prev-state').click -> showState('prev')
-$('#next-state').click -> showState('next')
+$('#prev-state').click (e) ->
+  e.preventDefault()
+  showState('prev')
+$('#next-state').click (e) ->
+  e.preventDefault()
+  showState('next')
 
 
 # React to the new states of execution

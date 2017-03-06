@@ -195,13 +195,13 @@ describe 'The transition function for commands', ->
       s: [8]
       m: {}
     expect(trans(state)).toEqual
-      c: [1, ':=', '()']
+      c: [1, 'assign', '()']
       s: ['x', 8]
       m: {}
 
   it 'can assign in memory', ->
     state =
-      c: [':=', '()']
+      c: ['assign', '()']
       s: [1, 'x', 8]
       m: y: 2
     expect(trans(state)).toEqual

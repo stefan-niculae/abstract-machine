@@ -80,10 +80,10 @@ trans = ({c, s, m}) ->
 
   # AtribC
   if h.type is 'assign'
-    return { c:[h.val, ':=', t...], s:[h.var, s...], m }
+    return { c:[h.val, 'assign', t...], s:[h.var, s...], m }
 
   # Atrib
-  if h is ':='
+  if h is 'assign'
     [n, v, st...] = s
     newMem = clone m # maintain immutability of memory from call to call
     newMem[v] = n # TODO fix for   x := !x - 1

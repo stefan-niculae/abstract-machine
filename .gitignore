@@ -7,8 +7,13 @@
 !webpack.config.js
 *.css
 *.css.map
-.sass-cache
+
 
 # generated
 grammar.coffee
 bundle.js
+
+
+# temp
+.sass-cache
+.texpadtmp

@@ -26,9 +26,9 @@ morekeywords={a,int,float,true,false,string,if,then,else,while,do,z},
 
 Non-terminals:
   \begin{lstlisting}
-  Expr -> nr | Expr iop Expr | !var | ( E )
+  Expr -> nr | Expr iop Expr | var | ( E )
   Cond -> bl | Expr bop Expr 
-  Stmt -> () | Stmt ; Stmt | var := Expr
+  Stmt -> () | Stmt ; Stmt | var = Expr
         | if Cond then Body else Body
         | while Cond do Body
   Body -> Stmt
@@ -56,7 +56,7 @@ Non-terminals:
 Arithmetic expressions $(E)$:
 \begin{align*}
 \langle n  \bm{c},  \bm{s},  \bm{m} \rangle  &\rightarrow   \langle  \bm{c}, n  \bm{s},  \bm{m} \rangle \\
-\langle !v  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  m(v),  \bm{s},  \bm{m} \rangle \\
+\langle v  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  m(v),  \bm{s},  \bm{m} \rangle \\
 \langle (E_1\ iop \ E_2)  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle E_1\  E_2\  iop  \ \bm{c},  \bm{s},  \bm{m} \rangle \\
 \langle iop \ \bm{c}, n_2 n_1  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c}, n  \bm{s},  \bm{m} \rangle  \ \text{where} \ n = n_1\ \underline{iop} \ n_2 \\
 \end{align*}
@@ -70,8 +70,8 @@ Statements $(S)$:
 \begin{align*}
 \langle ()  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  \bm{s},  \bm{m} \rangle \\
 \langle (S_1 ; S_2)  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle S_1 S_2  \bm{c},  \bm{s},  \bm{m} \rangle \\
-\langle v:=E  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle E :=  \bm{c}, v  \bm{s},  \bm{m} \rangle \\
-\langle :=  \bm{c}, n v  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  \bm{s},  \bm{m}[v=n] \rangle \\
+\langle v=E  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle E\ assign\  \bm{c}, v  \bm{s},  \bm{m} \rangle \\
+\langle assign \  \bm{c}, n v  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  \bm{s},  \bm{m}[v=n] \rangle \\
 \end{align*}
 Branching $(if)$:
 \begin{align*}

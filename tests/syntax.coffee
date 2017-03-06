@@ -20,6 +20,7 @@ describe 'The parser for literals', ->
     input = 'false'
     expect(parse(input)).toEqual false
 
+  # TODO: test for var starting with number to error
 
 
 
@@ -42,7 +43,7 @@ describe 'The parser for conditions & expressions', ->
       e2: 2
 
   it 'can parse dereferencing', ->
-    input = '!var'
+    input = 'var'
     expect(parse(input)).toEqual
       type: 'valof'
       var: 'var'
@@ -120,14 +121,14 @@ describe 'The parser for commands', ->
     expect(parse(input)).toEqual '()'
 
   it 'can parse literal assignment', ->
-    input = 'var := 0'
+    input = 'var = 0'
     expect(parse(input)).toEqual
       type: 'assign'
       var: 'var'
       val: 0
 
   it 'can parse expression assignment', ->
-    input = 'x := !y + 1'
+    input = 'x = y + 1'
     expect(parse(input)).toEqual
       type: 'assign'
       var: 'x'
@@ -141,16 +142,16 @@ describe 'The parser for commands', ->
 
   # TODO
 #  it "doesn't allow keyword assignment", ->
-#    input = 'false := 5'
+#    input = 'false = 5'
 #    expect(-> parse(input)).toThrowError "false is a keyword, it can't be used as a variable name"
 
   # TODO
 #  it "doesn't allow keyword comparison", ->
-#    input = '!while < 5'
+#    input = 'while < 5'
 #    expect(-> parse(input)).toThrowError "while is a keyword, it can't be used as a variable name"
 
   it 'can parse sequenced statements', ->
-    input = 'x := 0; ()'
+    input = 'x = 0; ()'
     expect(parse(input)).toEqual
       type: 'seq'
       s1:
@@ -161,9 +162,9 @@ describe 'The parser for commands', ->
 
   it 'can parse sequencing with newlines', ->
     input = """
-      x := 0;
+      x = 0;
 
-      y := 1
+      y = 1
     """
     expect(parse(input)).toEqual
       type: "seq"
@@ -183,7 +184,7 @@ describe 'The parser for commands', ->
 describe 'The parser for control structures', ->
 
   it 'can parse an if statement', ->
-    input = 'if true then () else x := 0'
+    input = 'if true then () else x = 0'
     expect(parse(input)).toEqual
       type: 'if'
       cond: true
@@ -266,9 +267,9 @@ describe 'The parser for more complex programs', ->
 
   it 'can do summation', ->
     input = """
-    while 0 <= !x do {
-      sum := !sum + !x;
-      x := !x - 1
+    while 0 <= x do {
+      sum = sum + x;
+      x = x - 1
     }
     """
     expect(parse(input)).toEqual

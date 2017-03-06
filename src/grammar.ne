@@ -15,8 +15,8 @@ Main -> _ Stmt _ {% striphead %}
 
 # Statement
 Stmt -> "()"              {% id %} # skip
-      | Var _ ":=" _ Expr {% (d) -> type:'assign', var: d[0], val: d[4] %}     # assign
-      | Stmt _ ";" _ Stmt {% (d) -> type:'seq',    s1:  d[0], s2:  d[4] %}    # sequence
+      | Var _ "=" _ Expr  {% (d) -> type:'assign', var: d[0], val: d[4] %} # assign
+      | Stmt _ ";" _ Stmt {% (d) -> type:'seq',    s1:  d[0], s2:  d[4] %} # sequence
       | "if" __ Cond __ "then" __ Body __ "else" __ Body
                           {% (d) -> type:'if',     cond:d[2], st:  d[6], sf:d[10] %}
       | "while" __ Cond __ "do" __ Body
@@ -27,7 +27,7 @@ Body -> Stmt              {% id %}
 
 # Expression
 Expr -> Nr                {% id %}
-      | "!" _ Var         {% (d) -> type:'valof',  var:d[2] %}
+      | Var               {% (d) -> type:'valof',  var:d[0] %}
       | Expr _ IOp _ Expr {% (d) -> type:'expr',   e1: d[0],  op:d[2], e2:d[4] %}
       | "(" _ Expr _ ")"  {% (d) -> return d[2] %}
 
@@ -71,7 +71,7 @@ Int   -> [0-9]:+     {% (d) -> parseInt  (d[0].join(''))      %}
 
 
 # Variable (alphanumeric & underscores)
-Var -> [\w_]:+       {% (d) -> d[0].join '' %}
+Var -> [a-z_] [\w_]:*       {% (d) -> d[0] + d[1].join '' %}  # starts with letter/underscore, continues with alphanumeric/_
 #{% (d) -> name=d[0].join(''); if(isKeyword(name)) throw new Error(name + " is a keyword, it can't be used as a variable name"); return name %}
 # TODO check if not in keywords!
 

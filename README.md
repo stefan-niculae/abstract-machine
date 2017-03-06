@@ -36,4 +36,12 @@ Open `app/page.html`
 
 
 ## TODO
+Next:
+- break, continue, exit
+- syntax & runtime errors
+- explanation for each evaluation step
+
+
+Future:
+- boolean variables
 - prettier visualization
