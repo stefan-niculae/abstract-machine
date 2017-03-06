@@ -47,6 +47,7 @@ clone = (obj) ->
 
 # commands, stack, memory
 trans = ({c, s, m}) ->
+  # TODO: refactor names (h - head, etc)
   [h, t...] = c
 
   # TODO: unify typeof x; x.type; isa(x, type); x is ...
@@ -85,7 +86,7 @@ trans = ({c, s, m}) ->
   if h is ':='
     [n, v, st...] = s
     newMem = clone m # maintain immutability of memory from call to call
-    newMem[v] = n
+    newMem[v] = n # TODO fix for   x := !x - 1
     return { c:t, s:st, m:newMem }
 
   # CondC
@@ -120,6 +121,7 @@ trans = ({c, s, m}) ->
   throw new Error("#{h} didn't match anything for transition")
 
 
+MAX_N_STATES = 100 # TODO: add unit test for infinite cycles
 
 evaluate = (program) ->
   current =  # initial, empty state
@@ -132,6 +134,10 @@ evaluate = (program) ->
   while current.c.length > 0
     current = trans(current)
     states.push current
+
+    if states.length > MAX_N_STATES
+      console.warn "maximum number of states reached (#{MAX_N_STATES}), stopping"
+      break
 
   return states
 

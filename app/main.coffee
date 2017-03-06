@@ -16,12 +16,15 @@ EXAMPLES = [
   """,
 
   """
-  while 0 <= !x do {
+  x := 5;
+  sum := 0;
+  while !x > 0 do {
     sum := !sum + !x;
     x := !x - 1
   }
   """
 ]
+
 
 # Wrapper
 jsonViewer = (obj) ->
@@ -29,6 +32,7 @@ jsonViewer = (obj) ->
   formatter.render()
 
 
+# Cached because it's often used
 currStateBox = $ '#current-state'
 
 # Fill evaluation output box
@@ -48,6 +52,7 @@ showState = (idx) ->
 
   $ '#evaluation-output'
     .html jsonViewer @states[idx]
+  # TODO: catch compilation error and show line number
 
 
 # React to input box change
@@ -60,6 +65,7 @@ $('#prev-state').click -> showState('prev')
 $('#next-state').click -> showState('next')
 
 
+# React to the new states of execution
 setupStates = (parsed) ->
   @states = evaluate parsed
   $ '#nr-states'
@@ -78,7 +84,7 @@ parseProgram = ->
   parsed = parse program
   $ '#parse-output'
     .html jsonViewer parsed
-  # TODO: catch error and show line number
+  # TODO: catch syntax error and show line number
 
   # Make evaluation box react
   setupStates parsed
