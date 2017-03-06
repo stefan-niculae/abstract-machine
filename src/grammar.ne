@@ -78,6 +78,6 @@ Var -> [a-z_] [\w_]:*       {% (d) -> d[0] + d[1].join '' %}  # starts with lett
 
 
 # Whitespace
-__ -> [\s\\n]:+      {% -> null %}  # required whitespace
-_  -> [\s\\n]:*      {% -> null %}  # optional whitespace
+__ -> [\s]:+      {% -> null %}  # required whitespace
+_  -> [\s]:*      {% -> null %}  # optional whitespace
 

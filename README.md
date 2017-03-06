@@ -45,3 +45,4 @@ Next:
 Future:
 - boolean variables
 - prettier visualization
+- newline for sequencing?

@@ -8,24 +8,20 @@ parse = require '../src/parser'
 
 EXAMPLES = [
   """
-  x = 3;
-  while x > 0 do
-    x = x - 1
-  """, # FIXME!!!
-  """
-  x = 0;
-  if x < 1 then
-    y = x
+  a = 1;
+  b = 7;
+  if a < b then
+    min = a
   else
-    y = 1
+    min = b
   """,
 
   """
-  x = 5;
+  x = 3;
   sum = 0;
   while x > 0 do {
-    sum := sum + x;
-    x := x - 1
+    sum = sum + x;
+    x = x - 1
   }
   """
 ]
@@ -33,7 +29,7 @@ EXAMPLES = [
 
 # Wrapper
 jsonViewer = (obj) ->
-  formatter = new JSONFormatter obj, openedLevels=2, hoverPreviewEnabled: yes
+  formatter = new JSONFormatter obj, openedLevels=3, hoverPreviewEnabled: yes
   formatter.render()
 
 

@@ -271,9 +271,10 @@ describe 'The transition function for branching and looping', ->
 
   it 'can loop when the top of the stack is false', ->
     cond = {type: 'cond', e1: 1, op: '<', e2: 2}
+    body = {type: 'assign', var: 'x', val: 0}
     state =
       c: ['loop', '()']
-      s: [false, cond, '()', 8]
+      s: [false, cond, body, 8]
       m: {}
     expect(trans(state)).toEqual
       c: ['()']
@@ -282,12 +283,13 @@ describe 'The transition function for branching and looping', ->
 
   it 'can loop when the top of the stack is true', ->
     cond = {type: 'cond', e1: 1, op: '<', e2: 2}
+    body = {type: 'assign', var: 'x', val: 0}
     state =
       c: ['loop', '()']
-      s: [true, cond, '()', 8]
+      s: [true, cond, body, 8]
       m: {}
     expect(trans(state)).toEqual
-      c: [cond, {type:'while', cond, body:'()'}, '()']
+      c: [body, {type:'while', cond, body}, '()']
       s: [8]
       m: {}
 
@@ -303,3 +305,16 @@ describe 'The evaluation function', ->
 
     expect(result.c).toEqual []
     expect(result.m).toEqual {x: 2}
+
+
+  # TODO self assignment in while
+  """
+  x = 3;
+  while x > 0 do
+    x = x - 1
+  """
+
+  # TODO infinite cycle guard
+  """
+  while true do ()
+  """

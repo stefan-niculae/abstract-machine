@@ -1,5 +1,5 @@
 module.exports = {
-    entry: './app/main.coffee',
+    entry: './app/interface.coffee',
     output: {filename: 'app/bundle.js'},
     module: {
         rules: [{

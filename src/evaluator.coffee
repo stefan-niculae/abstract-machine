@@ -114,14 +114,14 @@ trans = ({c, s, m}) ->
     [loopAgain, cond, body, st...] = s
     if loopAgain
       whileStmt = {type: 'while', cond, body}
-      return {c:[cond, whileStmt, t...], s:st, m}
+      return {c:[body, whileStmt, t...], s:st, m}
     else
       return {c:t, s:st, m}
 
   throw new Error("#{h} didn't match anything for transition")
 
 
-MAX_N_STATES = 100 # TODO: add unit test for infinite cycles
+MAX_N_STATES = 1000
 
 evaluate = (program) ->
   current =  # initial, empty state
