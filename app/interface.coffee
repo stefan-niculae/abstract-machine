@@ -1,9 +1,10 @@
 $ = require 'jquery'
 JSONFormatter = require 'json-formatter-js'
-#CodeMirror = require 'codemirror'
 
 parse = require '../src/parser'
 {evaluate} = require '../src/evaluator'
+
+require './style'
 
 
 

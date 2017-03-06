@@ -14,7 +14,6 @@ The types are defined in `src/types`.
 The app behaviour lies in 'app/interface', the layout in 'app/page' and the form in 'app/style'.
 
 ## Demo
-TODO ghpages
 Online: http://stefan1niculae.github.io/abstract-machine
 
 Inspect the results of parsing your program and its configuration state after each step of execution.
@@ -24,13 +23,13 @@ Provides error messages and guards against infinite cycles and division by zero.
 ## Build
 - Download dependencies: `npm install`
 - Fix nearley script: `curl https://raw.githubusercontent.com/Hardmath123/nearley/master/lib/nearley.js > node_modules/nearley/lib/nearley.js`
-- Bundle scripts: `node_modules/.bin/webpack`
+- Bundle scripts & stylesheet: `node_modules/.bin/webpack`
 
 
 ## Dev
 - Generate grammar: `node_modules/.bin/nearleyc src/grammar.ne > src/grammar.coffee`
-- Compile CoffeeScript: `node_modules/.bin/coffee --compile --map .`
-- Compile Sass: `sass app/style.sass > app/style.css` TODO: add sass-loader to webpack
+- Compile CoffeeScript: `node_modules/.bin/coffee --compile --map src app`
+- Compile Sass: `node_modules/.bin/node-sass app --output app --source-map true`
 
 Nearley playground: https://omrelli.ug/nearley-playground
 

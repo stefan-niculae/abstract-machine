@@ -24,8 +24,12 @@
   "devDependencies": {
     "coffee-loader": "^0.7.3",
     "coffee-script": "^1.12.4",
+    "css-loader": "^0.26.2",
     "jasmine": "^2.5.3",
     "nearley-loader": "0.0.2",
+    "node-sass": "^4.5.0",
+    "sass-loader": "^6.0.2",
+    "style-loader": "^0.13.2",
     "webpack": "^2.2.1"
   }
 }
