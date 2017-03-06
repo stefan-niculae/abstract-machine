@@ -13,7 +13,12 @@ The semantics are implemented in `src/evaluator` and tested by `tests/semantics`
 The types are defined in `src/types`.
 The app behaviour lies in 'app/interface', the layout in 'app/page' and the form in 'app/style'.
 
-Demo: TODO ghpages
+## Demo
+TODO ghpages
+Online: http://stefan1niculae.github.io/abstract-machine
+
+Inspect the results of parsing your program and its configuration state after each step of execution.
+Provides error messages and guards against infinite cycles and division by zero.
 
 
 ## Build
@@ -45,7 +50,7 @@ Open `app/page.html`
 
 ## TODO
 Next:
-- break, continue, exit
+- break, continue
 - explanation for each evaluation step
 
 
