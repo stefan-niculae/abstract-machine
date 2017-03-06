@@ -1,3 +1,5 @@
+{Assign, Seq, If, While, ValOf, Expr, Cond, Action} = require './types'
+
 func =
   # iop
   '+': (a, b) -> a + b
@@ -36,7 +38,7 @@ isa = (x, type) ->
       '>='
     ]
 
-  false
+  return false
 
 
 clone = (obj) ->
@@ -79,8 +81,8 @@ trans = ({c, s, m}) ->
     return {c:t, s, m}
 
   # AtribC
-  if h.type is 'assign'
-    return { c:[h.val, 'assign', t...], s:[h.var, s...], m }
+  if h instanceof Assign
+    return { c:[h.value, 'assign', t...], s:[h.var, s...], m }
 
   # Atrib
   if h is 'assign'

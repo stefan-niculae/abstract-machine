@@ -1,4 +1,5 @@
 {trans, finalState} = require '../src/evaluator'
+{Assign, Seq, If, While, ValOf, Expr, Cond} = require '../src/types'
 
 
 
@@ -191,7 +192,7 @@ describe 'The transition function for commands', ->
 
   it 'can disperse an assignment statement to c and s', ->
     state =
-      c: [{type: 'assign', var: 'x', val: 1}, '()']
+      c: [new Assign(var: 'x', value: 1), '()']
       s: [8]
       m: {}
     expect(trans(state)).toEqual
@@ -211,7 +212,7 @@ describe 'The transition function for commands', ->
 
 
   it 'can sequence statements', ->
-    assignment = {type: 'assign', var: 'x', val: 1}
+    assignment = new Assign var: 'x', value: 1
     state =
       c: [{type:'seq', s1:'()', s2:assignment}, '()']
       s: []
@@ -226,7 +227,7 @@ describe 'The transition function for commands', ->
 describe 'The transition function for branching and looping', ->
 
   it 'can disperse an if statements to c and s', ->
-    assignment = {type: 'assign', var: 'x', val: 1}
+    assignment = new Assign var: 'x', value: 1
     state =
       c: [{type: 'if', cond: true, st: '()', sf: assignment }, '()']
       s: [8]
@@ -238,7 +239,7 @@ describe 'The transition function for branching and looping', ->
 
 
   it 'can branch based on the top of the stack (true)', ->
-    assignment = {type: 'assign', var: 'x', val: 1}
+    assignment = new Assign var: 'x', value: 1
     state =
       c: ['branch', '()']
       s: [true, '()', assignment, 8]
@@ -249,7 +250,7 @@ describe 'The transition function for branching and looping', ->
       m: {}
 
   it 'can branch based on the top of the stack (false)', ->
-    assignment = {type: 'assign', var: 'x', val: 1}
+    assignment = new Assign var: 'x', value: 1
     state =
       c: ['branch', '()']
       s: [false, '()', assignment, 8]
@@ -271,7 +272,7 @@ describe 'The transition function for branching and looping', ->
 
   it 'can loop when the top of the stack is false', ->
     cond = {type: 'cond', e1: 1, op: '<', e2: 2}
-    body = {type: 'assign', var: 'x', val: 0}
+    body = new Assign var: 'x', value: 0
     state =
       c: ['loop', '()']
       s: [false, cond, body, 8]
@@ -283,7 +284,7 @@ describe 'The transition function for branching and looping', ->
 
   it 'can loop when the top of the stack is true', ->
     cond = {type: 'cond', e1: 1, op: '<', e2: 2}
-    body = {type: 'assign', var: 'x', val: 0}
+    body = new Assign var: 'x', value: 0
     state =
       c: ['loop', '()']
       s: [true, cond, body, 8]
@@ -300,8 +301,8 @@ describe 'The evaluation function', ->
   it 'can do sequencing', ->
     result = finalState
       type: 'seq'
-      s1: {type: 'assign', var: 'x', val: 1}
-      s2: {type: 'assign', var: 'x', val: 2}
+      s1: new Assign var: 'x', value: 1
+      s2: new Assign var: 'x', value: 2
 
     expect(result.c).toEqual []
     expect(result.m).toEqual {x: 2}

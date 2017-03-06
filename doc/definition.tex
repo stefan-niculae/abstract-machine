@@ -31,8 +31,7 @@ Non-terminals:
   Stmt -> () | Stmt ; Stmt | var = Expr
         | if Cond then Body else Body
         | while Cond do Body
-  Body -> Stmt
-        | { Stmt }
+  Body -> Stmt | { Stmt }
   \end{lstlisting}
 
 \vspace{3em}

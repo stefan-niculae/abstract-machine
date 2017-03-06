@@ -29,7 +29,7 @@ EXAMPLES = [
 
 # Wrapper
 jsonViewer = (obj) ->
-  formatter = new JSONFormatter obj, openedLevels=3, hoverPreviewEnabled: yes
+  formatter = new JSONFormatter obj, openedLevels=2, hoverPreviewEnabled: yes
   formatter.render()
 
 

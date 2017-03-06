@@ -1,4 +1,5 @@
 parse = require '../src/parser'
+{Assign, Seq, If, While, ValOf, Expr, Cond} = require '../src/types'
 
 
 # TODO: debug grammar (where Main -> Expr, Cond)?
@@ -122,17 +123,16 @@ describe 'The parser for commands', ->
 
   it 'can parse literal assignment', ->
     input = 'var = 0'
-    expect(parse(input)).toEqual
-      type: 'assign'
+    expect(parse(input)).toEqual new Assign
       var: 'var'
-      val: 0
+      value: 0
+      msg: 'from tests'
 
   it 'can parse expression assignment', ->
     input = 'x = y + 1'
-    expect(parse(input)).toEqual
-      type: 'assign'
+    expect(parse(input)).toEqual new Assign
       var: 'x'
-      val:
+      value:
         type: 'expr'
         e1:
           type: 'valof'
@@ -154,10 +154,9 @@ describe 'The parser for commands', ->
     input = 'x = 0; ()'
     expect(parse(input)).toEqual
       type: 'seq'
-      s1:
-        type: 'assign'
+      s1: new Assign
         var: 'x'
-        val: 0
+        value: 0
       s2: '()'
 
   it 'can parse sequencing with newlines', ->
@@ -168,14 +167,12 @@ describe 'The parser for commands', ->
     """
     expect(parse(input)).toEqual
       type: "seq"
-      s1:
-        type: "assign"
+      s1: new Assign
         var: "x"
-        val: 0
-      s2:
-        type: "assign"
+        value: 0
+      s2: new Assign
         var: "y"
-        val: 1
+        value: 1
 
 
 
@@ -189,10 +186,9 @@ describe 'The parser for control structures', ->
       type: 'if'
       cond: true
       st: '()'
-      sf:
-        type: 'assign'
+      sf: new Assign
         var: 'x'
-        val: 0
+        value: 0
 
   it 'can parse a while statement', ->
     input = 'while false do ()'
@@ -277,17 +273,15 @@ describe 'The parser for more complex programs', ->
       cond: type: 'cond', e1: 0, op: '<=', e2: {type: 'valof', var: 'x'}
       body:
         type: 'seq'
-        s1:
-          type: 'assign'
+        s1: new Assign
           var: 'sum'
-          val:
+          value:
             type: 'expr'
             e1: type: 'valof', var: 'sum'
             op: '+'
             e2: type: 'valof', var: 'x'
-        s2:
-          type: 'assign'
+        s2: new Assign
           var: 'x'
-          val: type: 'expr', e1: {type: 'valof', var: 'x'}, op: '-', e2: 1
+          value: type: 'expr', e1: {type: 'valof', var: 'x'}, op: '-', e2: 1
 
   # TODO: more complex tests
