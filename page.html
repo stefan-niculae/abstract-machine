@@ -1,0 +1,35 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Abstract Machine</title>
+</head>
+<body>
+
+<header>Program</header>
+<textarea id="program-input"></textarea>
+<p>Load: <span id="examples"></span></p>
+
+<header>
+  Parsed
+  <a href="grammar.pdf" target="_blank">grammar</a>
+</header>
+<div id="parse-output"></div>
+
+<header>
+  Evaluation
+  <a href="rules.pdf" target="_blank">rules</a>
+</header>
+<div id="evaluation-output"></div>
+<div id="evaluation-control">
+  <a id="prev-state" href="#">‹ prev</a>
+  <input id="current-state" type="number" value="1" min="1"> /
+  <span id="nr-states">-</span>
+  <a id="next-state" href="#">next ›</a>
+</div>
+
+<footer><a href="https://github.com/stefan1niculae/abstract-machine">View source</a></footer>
+
+<script src="bundle.js"></script>
+
+</body>
+</html>
