@@ -32,7 +32,7 @@ assertType = (obj, types...) ->
 class Assign
   constructor: ({@var, @value}) ->
     assertType @var, String
-    assertType @value, Expr, Number, Object #TODO ValOf instead of Object
+    assertType @value, Expr, Number, ValOf
 
 class Seq
   constructor: ({@s1, @s2}) ->
@@ -57,15 +57,15 @@ class ValOf
 
 class Expr
   constructor: ({@e1, @op, @e2}) ->
-    assertType @e1, Expr, Number
+    assertType @e1, Expr, Number, ValOf
     assertType @op, '+', '-', '*', '/'
-    assertType @e2, Expr, Number
+    assertType @e2, Expr, Number, ValOf
 
 class Cond
   constructor: ({@e1, @op, @e2}) ->
-    assertType @e1, Expr, Number
+    assertType @e1, Expr, Number, ValOf
     assertType @op, '==', '!=', '<', '>', '<=', '>='
-    assertType @e2, Expr, Number
+    assertType @e2, Expr, Number, ValOf
 
 class Action
   # Intentionally not flat for better readability

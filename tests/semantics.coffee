@@ -1,5 +1,6 @@
 {trans, finalState} = require '../src/evaluator'
-{Assign, Seq, If, While, ValOf, Expr, Cond} = require '../src/types'
+{Assign, Seq, If, While, ValOf, Expr, Cond, Action} = require '../src/types'
+
 
 
 
@@ -17,7 +18,7 @@ describe 'The transition function for int expressions', ->
 
   it 'can put the value of a var from m in s', ->
     state =
-      c: [{type: 'valof', var: 'x'}, '()']
+      c: [new ValOf(var: 'x'), '()']
       s: [8]
       m: x: 1, y: 2
     expect(trans(state)).toEqual
@@ -27,14 +28,14 @@ describe 'The transition function for int expressions', ->
 
   it 'throws an exception on undefined var', ->
     state =
-      c: [{type: 'valof', var: 'x'}]
+      c: [new ValOf(var: 'x')]
       s: []
       m: {}
     expect(-> trans(state)).toThrowError 'x is undefined'
 
   it 'can transform an expression into post-fix form', ->
     state =
-      c: [{type: 'expr', e1: 1, op: '+', e2: 2}, '()']
+      c: [new Expr(e1: 1, op: '+', e2: 2), '()']
       s: []
       m: {}
     expect(trans(state)).toEqual
@@ -108,7 +109,7 @@ describe 'The transition function for bool conditions', ->
 
   it 'can transform a condition into post-fix form', ->
     state =
-      c: [{type: 'cond', e1: 1, op: '<', e2: 2}, '()']
+      c: [new Cond(e1: 1, op: '<', e2: 2), '()']
       s: []
       m: {}
     expect(trans(state)).toEqual
@@ -214,7 +215,7 @@ describe 'The transition function for commands', ->
   it 'can sequence statements', ->
     assignment = new Assign var: 'x', value: 1
     state =
-      c: [{type:'seq', s1:'()', s2:assignment}, '()']
+      c: [new Seq(s1:'()', s2:assignment), '()']
       s: []
       m: {}
     expect(trans(state)).toEqual
@@ -229,7 +230,7 @@ describe 'The transition function for branching and looping', ->
   it 'can disperse an if statements to c and s', ->
     assignment = new Assign var: 'x', value: 1
     state =
-      c: [{type: 'if', cond: true, st: '()', sf: assignment }, '()']
+      c: [new If(cond: true, st: '()', sf: assignment), '()']
       s: [8]
       m: {}
     expect(trans(state)).toEqual
@@ -262,7 +263,7 @@ describe 'The transition function for branching and looping', ->
 
   it 'can disperse a while statement to c and s ', ->
     state =
-      c: [{type:'while', cond:true, body:'()'}, '()']
+      c: [new While(cond:true, body:'()'), '()']
       s: [8]
       m: {}
     expect(trans(state)).toEqual
@@ -271,7 +272,7 @@ describe 'The transition function for branching and looping', ->
       m: {}
 
   it 'can loop when the top of the stack is false', ->
-    cond = {type: 'cond', e1: 1, op: '<', e2: 2}
+    cond = new Cond e1: 1, op: '<', e2: 2
     body = new Assign var: 'x', value: 0
     state =
       c: ['loop', '()']
@@ -283,14 +284,14 @@ describe 'The transition function for branching and looping', ->
       m: {}
 
   it 'can loop when the top of the stack is true', ->
-    cond = {type: 'cond', e1: 1, op: '<', e2: 2}
+    cond = new Cond e1: 1, op: '<', e2: 2
     body = new Assign var: 'x', value: 0
     state =
       c: ['loop', '()']
       s: [true, cond, body, 8]
       m: {}
     expect(trans(state)).toEqual
-      c: [body, {type:'while', cond, body}, '()']
+      c: [body, new While({cond, body}), '()']
       s: [8]
       m: {}
 
@@ -299,8 +300,7 @@ describe 'The transition function for branching and looping', ->
 describe 'The evaluation function', ->
 
   it 'can do sequencing', ->
-    result = finalState
-      type: 'seq'
+    result = finalState new Seq
       s1: new Assign var: 'x', value: 1
       s2: new Assign var: 'x', value: 2
 

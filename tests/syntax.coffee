@@ -29,34 +29,29 @@ describe 'The parser for conditions & expressions', ->
 
   it 'can parse a boolean condition', ->
     input = '0 < 1'
-    expect(parse(input)).toEqual
-      type: 'cond'
+    expect(parse(input)).toEqual new Cond
       e1: 0
       op: '<'
       e2: 1
 
   it 'can parse an arithmetic expression', ->
     input = '1 + 2'
-    expect(parse(input)).toEqual
-      type: 'expr'
+    expect(parse(input)).toEqual new Expr
       e1: 1
       op: '+'
       e2: 2
 
   it 'can parse dereferencing', ->
     input = 'var'
-    expect(parse(input)).toEqual
-      type: 'valof'
+    expect(parse(input)).toEqual new ValOf
       var: 'var'
 
   it 'does correct order of operations (a + b/c)', ->
     input = '4 + 6/2'
-    expect(parse(input)).toEqual
-      type: 'expr'
+    expect(parse(input)).toEqual new Expr
       e1: 4
       op: '+'
-      e2:
-        type: 'expr'
+      e2: new Expr
         e1: 6
         op: '/'
         e2: 2
@@ -64,10 +59,8 @@ describe 'The parser for conditions & expressions', ->
   # TODO
 #  it 'does correct order of operations (a/b + c)', ->
 #    input = '4/2 + 6'
-#    expect(parse(input)).toEqual
-#      type: 'expr'
-#      e1:
-#        type: 'expr'
+#    expect(parse(input)).toEqual new Expr
+#      e1: new Expr
 #        e1: 4
 #        op: '/'
 #        e2: 2
@@ -76,12 +69,10 @@ describe 'The parser for conditions & expressions', ->
 
   it 'does arith expr parens (div)', ->
     input = '4 + (6/2)'
-    expect(parse(input)).toEqual
-      type: 'expr'
+    expect(parse(input)).toEqual new Expr
       e1: 4
       op: '+'
-      e2:
-        type: 'expr'
+      e2: new Expr
         e1: 6
         op: '/'
         e2: 2
@@ -89,10 +80,8 @@ describe 'The parser for conditions & expressions', ->
 
   it 'does arith expr parens (plus)', ->
     input = '(4+6) / 2'
-    expect(parse(input)).toEqual
-      type: 'expr'
-      e1:
-        type: 'expr'
+    expect(parse(input)).toEqual new Expr
+      e1: new Expr
         e1: 4
         op: '+'
         e2: 6
@@ -102,10 +91,8 @@ describe 'The parser for conditions & expressions', ->
   # TODO: currently they bind to the left
 #  it 'sequences operations to the right', ->
 #    input = '10 / 2 * 4' # ~> (10/2) * 4
-#    expect(parse(input)).toEqual
-#      type: 'expr'
-#      e1:
-#        type: 'expr'
+#    expect(parse(input)).toEqual new Expr
+#      e1: new Expr
 #        e1: 10
 #        op: '/'
 #        e2: 2
@@ -132,11 +119,8 @@ describe 'The parser for commands', ->
     input = 'x = y + 1'
     expect(parse(input)).toEqual new Assign
       var: 'x'
-      value:
-        type: 'expr'
-        e1:
-          type: 'valof'
-          var: 'y'
+      value: new Expr
+        e1: new ValOf var: 'y'
         op: '+'
         e2: 1
 
@@ -152,8 +136,7 @@ describe 'The parser for commands', ->
 
   it 'can parse sequenced statements', ->
     input = 'x = 0; ()'
-    expect(parse(input)).toEqual
-      type: 'seq'
+    expect(parse(input)).toEqual new Seq
       s1: new Assign
         var: 'x'
         value: 0
@@ -165,8 +148,7 @@ describe 'The parser for commands', ->
 
       y = 1
     """
-    expect(parse(input)).toEqual
-      type: "seq"
+    expect(parse(input)).toEqual new Seq
       s1: new Assign
         var: "x"
         value: 0
@@ -182,8 +164,7 @@ describe 'The parser for control structures', ->
 
   it 'can parse an if statement', ->
     input = 'if true then () else x = 0'
-    expect(parse(input)).toEqual
-      type: 'if'
+    expect(parse(input)).toEqual new If
       cond: true
       st: '()'
       sf: new Assign
@@ -192,8 +173,7 @@ describe 'The parser for control structures', ->
 
   it 'can parse a while statement', ->
     input = 'while false do ()'
-    expect(parse(input)).toEqual
-      type: 'while'
+    expect(parse(input)).toEqual new While
       cond: false
       body: '()'
 
@@ -205,11 +185,9 @@ describe 'The parser for control structures', ->
       else
         ()
     """
-    expect(parse(input)).toEqual
-      type: 'while'
+    expect(parse(input)).toEqual new While
       cond: false
-      body:
-        type: 'if'
+      body: new If
         cond: true
         st: '()'
         sf: '()'
@@ -223,8 +201,7 @@ describe 'The parser for control structures', ->
       ()
     }
     """
-    expect(parse(input)).toEqual
-      type: 'if'
+    expect(parse(input)).toEqual new If
       cond: true
       st: '()'
       sf: '()'
@@ -236,11 +213,9 @@ describe 'The parser for control structures', ->
       ()
     }
     """
-    expect(parse(input)).toEqual
-      type: 'while'
+    expect(parse(input)).toEqual new While
       cond: true
-      body:
-        type: 'seq'
+      body: new Seq
         s1: '()'
         s2: '()'
 
@@ -250,10 +225,8 @@ describe 'The parser for control structures', ->
         ();
     ()
     """
-    expect(parse(input)).toEqual
-      type: 'seq'
-      s1:
-        type: 'while'
+    expect(parse(input)).toEqual new Seq
+      s1: new While
         cond: true
         body: '()'
       s2: '()'
@@ -261,27 +234,60 @@ describe 'The parser for control structures', ->
 
 describe 'The parser for more complex programs', ->
 
-  it 'can do summation', ->
+  it 'can parse multiple-statements while', ->
     input = """
     while 0 <= x do {
       sum = sum + x;
       x = x - 1
     }
     """
-    expect(parse(input)).toEqual
-      type: 'while'
-      cond: type: 'cond', e1: 0, op: '<=', e2: {type: 'valof', var: 'x'}
-      body:
-        type: 'seq'
+    expect(parse(input)).toEqual new While
+      cond: new Cond
+        e1: 0
+        op: '<='
+        e2: new ValOf var: 'x'
+
+      body: new Seq
         s1: new Assign
           var: 'sum'
-          value:
-            type: 'expr'
-            e1: type: 'valof', var: 'sum'
+          value: new Expr
+            e1: new ValOf var: 'sum'
             op: '+'
-            e2: type: 'valof', var: 'x'
+            e2: new ValOf var: 'x'
+
         s2: new Assign
           var: 'x'
-          value: type: 'expr', e1: {type: 'valof', var: 'x'}, op: '-', e2: 1
+          value: new Expr
+            e1: new ValOf var: 'x'
+            op: '-'
+            e2: 1
 
-  # TODO: more complex tests
+  it 'can parse min', ->
+    input = """
+    a = 1;
+    b = 7;
+    if a < b then
+      min = a
+    else
+      min = b
+    """
+    expect(parse(input)).toEqual new Seq
+      s1: new Seq
+        s1: new Assign
+          var: 'a'
+          value: 1
+        s2: new Assign
+          var: 'b'
+          value: 7
+      s2: new If
+        cond: new Cond
+          e1: new ValOf var: 'a'
+          op: '<'
+          e2: new ValOf var: 'b'
+        st: new Assign
+          var: 'min'
+          value: new ValOf var: 'a'
+        sf: new Assign
+          var: 'min'
+          value: new ValOf var: 'b'
+

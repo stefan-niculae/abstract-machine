@@ -16,24 +16,24 @@ Main -> _ Stmt _ {% striphead %}
 # Statement
 Stmt -> "()"              {% id %} # skip
       | Var _ "=" _ Expr  {% (d) -> new Assign var: d[0], value: d[4] %}
-      | Stmt _ ";" _ Stmt {% (d) -> type:'seq',    s1:  d[0], s2:  d[4] %} # sequence
+      | Stmt _ ";" _ Stmt {% (d) -> new Seq s1: d[0], s2: d[4] %}
       | "if" __ Cond __ "then" __ Body __ "else" __ Body
-                          {% (d) -> type:'if',     cond:d[2], st:  d[6], sf:d[10] %}
+                          {% (d) -> new If cond:d[2], st: d[6], sf:d[10] %}
       | "while" __ Cond __ "do" __ Body
-                          {% (d) -> type:'while',  cond:d[2], body:d[6] %}
+                          {% (d) -> new While cond:d[2], body:d[6] %}
 Body -> Stmt              {% id %}
       | "{" _ Stmt _ "}"  {% (d) -> d[2] %} # optional brackets (both)
 # TODO: break, continue, exit
 
 # Expression
 Expr -> Nr                {% id %}
-      | Var               {% (d) -> type:'valof',  var:d[0] %}
-      | Expr _ IOp _ Expr {% (d) -> type:'expr',   e1: d[0],  op:d[2], e2:d[4] %}
+      | Var               {% (d) -> new ValOf  var:d[0] %}
+      | Expr _ IOp _ Expr {% (d) -> new Expr e1: d[0], op:d[2], e2:d[4] %}
       | "(" _ Expr _ ")"  {% (d) -> return d[2] %}
 
 # Conditional
 Cond -> Bl                {% id %}
-      | Expr _ BOp _ Expr {% (d) -> type:'cond',   e1:d[0],   op:d[2], e2:d[4] %}
+      | Expr _ BOp _ Expr {% (d) -> new Cond e1:d[0], op:d[2], e2:d[4] %}
 
 
 

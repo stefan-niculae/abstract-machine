@@ -58,14 +58,14 @@ trans = ({c, s, m}) ->
     return { c:t, s:[h, s...], m }
 
   # Loc
-  if h.type is 'valof'
+  if h instanceof ValOf
     if h.var not of m
       throw new Error "#{h.var} is undefined"
     n = m[h.var]
     return { c:t, s:[n, s...], m }
 
   # IntOpC, BoolOpC
-  if h.type in ['expr', 'cond']
+  if h instanceof Expr or h instanceof Cond
     return { c:[h.e1, h.e2, h.op, t...], s, m }
 
   # IntOp, BoolOp
@@ -92,8 +92,8 @@ trans = ({c, s, m}) ->
     return { c:t, s:st, m:newMem }
 
   # CondC
-  if h.type is 'if'
-    # Use 'branch' as a command symbol in C to differentiate it from the statemtnt 'if'
+  if h instanceof If
+    # Use 'branch' as a command symbol in C to differentiate it from the statement 'if'
     return { c:[h.cond, 'branch', t...], s:[h.st, h.sf, s...], m }
 
   # CondT, CondF
@@ -103,19 +103,19 @@ trans = ({c, s, m}) ->
     return { c:[comm, t...], s:st, m }
 
   # Secv
-  if h.type is 'seq'
+  if h instanceof Seq
     return { c:[h.s1, h.s2, t...], s, m }
 
 
   # IterC
-  if h.type is 'while'
+  if h instanceof While
     return { c:[h.cond, 'loop', t...], s:[h.cond, h.body, s...], m }
 
   # IterT, IterF
   if h is 'loop'
     [loopAgain, cond, body, st...] = s
     if loopAgain
-      whileStmt = {type: 'while', cond, body}
+      whileStmt = new While {cond, body}
       return {c:[body, whileStmt, t...], s:st, m}
     else
       return {c:t, s:st, m}
