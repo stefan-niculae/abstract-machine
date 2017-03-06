@@ -173,7 +173,7 @@ trans = ({c, s, m}) ->
       m
     }
 
-  throw new Error("#{head} (keys: #{Object.keys(head).join(', ')} ) didn't match anything for transition")
+  throw new Error("#{head} didn't match anything for transition")
 
 
 MAX_N_STATES = 1000

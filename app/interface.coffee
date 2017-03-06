@@ -34,7 +34,11 @@ jsonViewer = (obj) ->
   formatter.render()
 
 
-# Cached because it's often used
+# Cached because they're often used
+programInput = $ '#program-input'
+parseOutput  = $ '#parse-output'
+evalOutput   = $ '#evaluation-output'
+evalControl  = $ '#evaluation-control'
 currStateBox = $ '#current-state'
 
 # Fill evaluation output box
@@ -53,7 +57,8 @@ showState = (idx) ->
     currStateBox.val idx+1
 
   # Fill output box
-  $ '#evaluation-output'
+  evalOutput
+    .removeClass 'info error'
     .html jsonViewer @states[idx]
   # TODO: catch compilation error and show line number
 
@@ -74,37 +79,80 @@ $('#next-state').click (e) ->
 
 # React to the new states of execution
 setupStates = (parsed) ->
-  @states = evaluate parsed
-  $ '#nr-states'
-    .text @states.length
-  $ '#current-state'
-    .attr max: @states.length
+  try
+    @states = evaluate parsed
 
-  # Initially, show the final state
-  showState 'last'
+    evalControl.show()
+    $('#nr-states').text @states.length
+    currStateBox.attr max: @states.length
 
+    # Initially, show the final state
+    showState 'last'
+
+  catch err
+    evalControl.hide()
+    evalOutput
+      .removeClass 'info'
+      .addClass 'error'
+      .text err.message
+
+
+
+emptyInput = ->
+  parseOutput
+    .removeClass 'error'
+    .addClass 'info'
+    .text 'enter some code in the box above...'
+
+  evalOutput
+    .removeClass 'error'
+    .addClass 'info'
+    .text '...to play with its execution'
+  evalControl.hide()
 
 
 # React to program input box change
 parseProgram = ->
-  program = $('#program-input').val()
-  parsed = parse program
-  $ '#parse-output'
-    .html jsonViewer parsed
-  # TODO: catch syntax error and show line number
+  program = programInput.val()
 
-  # Make evaluation box react
-  setupStates parsed
+  # Handle empty input
+  if program.length == 0
+    emptyInput()
+    return
+
+  try
+    parsed = parse program
+
+    if parsed is undefined
+      throw new Error "Cannot parse"  # will be caught below
+
+    parseOutput
+      .removeClass 'info error'
+      .html jsonViewer parsed
+
+    # Make evaluation box react
+    setupStates parsed
+
+  catch err
+    parseOutput
+      .removeClass 'info'
+      .addClass 'error'
+      .text err.message.replace('nearley: ', '')
+
+    evalOutput
+      .removeClass 'error'
+      .addClass 'info'
+      .text 'fix syntax errors first'
+    evalControl.hide()
+
 
 # Set event listener
-$ '#program-input'
-  .keyup -> parseProgram()
+programInput.keyup -> parseProgram()
 
 
 # Fill program input box
 loadExample = (nr) ->
-  $ '#program-input'
-    .text EXAMPLES[nr]
+  programInput.val EXAMPLES[nr]
   parseProgram()
 
 

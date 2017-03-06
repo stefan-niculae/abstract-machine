@@ -46,8 +46,6 @@ Open `app/page.html`
 ## TODO
 Next:
 - break, continue, exit
-- editor numbers & syntax highlighting (codemirror & coffeescript syntax)
-- syntax & runtime errors
 - explanation for each evaluation step
 
 
@@ -58,5 +56,7 @@ Future:
 - logical expressions (and, or, xor, not)
 - unary operators (++, -- etc)
 - more arithmetic operators (%, ^, +=, -= etc)
+- editor numbers & syntax highlighting (codemirror & coffeescript syntax)
+- more helpful error messages (including line number)
 - prettier visualization
 - newline for sequencing

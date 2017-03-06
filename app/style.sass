@@ -6,6 +6,7 @@ body
   max-width: 500px
   margin: auto
   font-family: "Open Sans", sans-serif
+  font-size: 13px
   background-color: $off-white
 
 header
@@ -15,7 +16,7 @@ header
   a
     &::before
       content: '('
-    font-size: .6em
+    font-size: .65em
     &::after
       content: ')'
 
@@ -41,6 +42,16 @@ a
 
 #examples a
   margin-right: .5em
+
+.info,
+.error
+  text-align: center
+  line-height: $box-min-height
+
+.info
+  color: grey
+.error
+  color: red
 
 #parse-output,
 #evaluation-output,

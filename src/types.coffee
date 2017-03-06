@@ -27,7 +27,7 @@ assertType = (obj, types...) ->
         return if typeof obj is 'boolean'
 
 
-  throw new Error "expected #{obj} (keys: #{Object.keys(obj).join(', ')}) to be one of: #{types.join(', ')}"
+  throw new Error "expected #{obj} to be one of: #{types.join(', ')}"
 
 class Assign
   constructor: ({@var, @value}) ->
