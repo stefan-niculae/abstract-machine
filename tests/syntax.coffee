@@ -21,12 +21,6 @@ describe 'The parser for literals', ->
     input = 'false'
     expect(parse(input)).toEqual false
 
-  it 'does not allow variables starting with a digit', ->
-    input = '1var = 0'
-    expect(-> parse(input)).toThrowError
-
-  # TODO: test for var starting with number to error
-
 
 
 describe 'The parser for conditions & expressions', ->
@@ -137,6 +131,10 @@ describe 'The parser for commands', ->
 #  it "doesn't allow keyword comparison", ->
 #    input = 'while < 5'
 #    expect(-> parse(input)).toThrowError "while is a keyword, it can't be used as a variable name"
+
+  it 'does not allow variables starting with a digit', ->
+    input = '1var = 0'
+    expect(-> parse(input)).toThrowError
 
   it 'can parse sequenced statements', ->
     input = 'x = 0; ()'

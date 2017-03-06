@@ -313,15 +313,16 @@ describe 'The evaluation function', ->
     expect(result.c).toEqual []
     expect(result.m).toEqual {x: 2}
 
+  it 'guards against infinite cycles', ->
+    state =
+      c: [new While cond: true, body: new Skip]
+      s: []
+      m: {}
+    expect(trans(state).m).toEqual {}
 
   # TODO self assignment in while
   """
   x = 3;
   while x > 0 do
     x = x - 1
-  """
-
-  # TODO infinite cycle guard
-  """
-  while true do ()
   """

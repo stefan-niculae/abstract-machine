@@ -30,8 +30,7 @@ Open `app/page.html`
 
 
 ## Bugs
-- Order of operations: `4 + 6/2` evaluates to `(4+6) / 2`
-- Workaround: `4 + (6/2)` to get `7`
+- Order of operations: `4 + 6/2` evaluates to `(4+6) / 2` (workaround: `4 + (6/2)` to get `7`)
 - Keywords: the following are treated as a variable name: `true, false, if, then, else, while, do`
 
 
@@ -44,6 +43,10 @@ Next:
 
 
 Future:
+- negative number literals
 - boolean variables
+- logical expressions (and, or, xor, not)
+- unary operators (++, -- etc)
+- more arithmetic operators (%, ^, +=, -= etc)
 - prettier visualization
-- newline for sequencing?
+- newline for sequencing

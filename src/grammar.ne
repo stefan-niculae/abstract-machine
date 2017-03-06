@@ -5,7 +5,6 @@
 @{% isKeyword = (x) -> x in ['true', 'false', 'if', 'then', 'else', 'while', 'do'] %}
 @{% strip = (d) -> d.filter((x) -> x != null) %}
 @{% striphead = (d) -> strip(d)[0] %}
-# TODO function composition?
 
 
 # A program
@@ -52,32 +51,26 @@ BOp -> "==" {% id %}
      | "<=" {% id %}
      | ">=" {% id %}
 
-# TODO: LOp "And", "Or", "Xor"?
-# TODO: unary operators "^", "Not"?
-
-
 
 # Boolean literal
-Bl -> "true"         {% -> true %}
-    | "false"        {% -> false %}
+Bl -> "true"          {% -> true %}
+    | "false"         {% -> false %}
 
 # Number literal
-Nr    -> Float       {% id %}
-       | Int         {% id %}
-Float -> Int "." Int {% (d) -> parseFloat(d[0] + '.' + d[2]) %}
-Int   -> [0-9]:+     {% (d) -> parseInt  (d[0].join(''))      %}
-# TODO: negative number literals?
+Nr    -> Float        {% id %}
+       | Int          {% id %}
+Float -> Int "." Int  {% (d) -> parseFloat(d[0] + '.' + d[2]) %}
+Int   -> [0-9]:+      {% (d) -> parseInt  (d[0].join(''))      %}
 
 
 
 # Variable (alphanumeric & underscores)
-Var -> [a-z_] [\w_]:*       {% (d) -> d[0] + d[1].join '' %}  # starts with letter/underscore, continues with alphanumeric/_
+Var -> [a-z_] [\w_]:* {% (d) -> d[0] + d[1].join '' %}  # starts with letter/underscore, continues with alphanumeric/_
 #{% (d) -> name=d[0].join(''); if(isKeyword(name)) throw new Error(name + " is a keyword, it can't be used as a variable name"); return name %}
-# TODO check if not in keywords!
 
 
 
 # Whitespace
-__ -> [\s]:+      {% -> null %}  # required whitespace
-_  -> [\s]:*      {% -> null %}  # optional whitespace
+__ -> [\s]:+          {% -> null %}  # required whitespace
+_  -> [\s]:*          {% -> null %}  # optional whitespace
 
