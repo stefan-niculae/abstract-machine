@@ -9,9 +9,16 @@ body
   background-color: $off-white
 
 header
-  font-size: 2em
-  margin-top: 1.5em
-  margin-bottom: .25em
+  margin-top: 1.25em
+  margin-bottom: .2em
+  font-size: 1.5em
+  a
+    &::before
+      content: '('
+    font-size: .6em
+    &::after
+      content: ')'
+
 
 a
   color: $off-black

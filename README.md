@@ -1,8 +1,17 @@
 # abstract-machine
 
-Control stack, Work stack, Memory model of execution
+Control stack, Work stack, Memory model of execution.
 
-TODO: simple explanation of each component & docs
+For a triplet `<c, s, m>` we process commands in `c` one by one.
+We use the working stack `s` for evaluating expressions, conditions etc.
+The memory `m` holds the values of variables.
+
+
+The syntax & rules are defined in `docs/definition`.
+The syntax is implemented in `src/grammar` and tested by `tests/syntax`.
+The semantics are implemented in `src/evaluator` and tested by `tests/semantics`.
+The types are defined in `src/types`.
+The app behaviour lies in 'app/interface', the layout in 'app/page' and the form in 'app/style'.
 
 Demo: TODO ghpages
 
