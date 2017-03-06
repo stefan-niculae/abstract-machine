@@ -18,18 +18,16 @@ func =
 
 
 isa = (x, type) ->
-  # TODO: use case (switch)?
-  if type is 'iop'
-    return x in [
+  switch type
+    when 'iop' then x in [
       '+'
       '-'
       '*'
       '/'
       '%'
-    ]
+      ]
 
-  if type is 'bop'
-    return x in [
+    when 'bop' then x in [
       '=='
       '!='
       '<'
@@ -37,8 +35,7 @@ isa = (x, type) ->
       '>'
       '>='
     ]
-
-  return false
+    else false
 
 
 clone = (obj) ->
@@ -49,77 +46,127 @@ clone = (obj) ->
 
 # commands, stack, memory
 trans = ({c, s, m}) ->
-  # TODO: refactor names (h - head, etc)
-  [h, t...] = c
+  [head, tail...] = c
 
-  # TODO: unify typeof x; x.type; isa(x, type); x is ...
   # IntCt, BoolCt
-  if typeof h in ['number', 'boolean']
-    return { c:t, s:[h, s...], m }
+  if typeof head in ['number', 'boolean']
+    return {
+      c: tail
+      s: [head, s...]
+      m
+    }
 
   # Loc
-  if h instanceof ValOf
-    if h.var not of m
-      throw new Error "#{h.var} is undefined"
-    n = m[h.var]
-    return { c:t, s:[n, s...], m }
+  if head instanceof ValOf
+    if head.var not of m
+      throw new Error "#{head.var} is undefined"
+    n = m[head.var]
+    return {
+      c: tail
+      s: [n, s...]
+      m
+    }
 
   # IntOpC, BoolOpC
-  if h instanceof Expr or h instanceof Cond
-    return { c:[h.e1, h.e2, h.op, t...], s, m }
+  if head instanceof Expr or head instanceof Cond
+    return {
+      c: [head.e1, head.e2, head.op, tail...],
+      s,
+      m
+    }
 
   # IntOp, BoolOp
-  if isa(h, 'iop') || isa(h, 'bop')
-    [n2, n1, st...] = s
-    f = func[h]
+  if isa(head, 'iop') || isa(head, 'bop')
+    [n2, n1, sTail...] = s
+    f = func[head]
     n = f(n1, n2)
-    return { c:t, s:[n, st...], m }
+    return {
+      c: tail
+      s: [n, sTail...]
+      m
+    }
 
 
   # Skip
-  if h instanceof Skip
-    return {c:t, s, m}
+  if head instanceof Skip
+    return {
+      c: tail
+      s
+      m
+    }
 
   # AtribC
-  if h instanceof Assign
-    return { c:[h.value, new Save, t...], s:[h.var, s...], m }
+  if head instanceof Assign
+    return {
+      c: [head.value, new Save, tail...]
+      s: [head.var, s...]
+      m
+    }
 
   # Atrib
-  if h instanceof Save
-    [n, v, st...] = s
+  if head instanceof Save
+    [n, v, sTail...] = s
     newMem = clone m # maintain immutability of memory from call to call
-    newMem[v] = n # TODO fix for   x := !x - 1
-    return { c:t, s:st, m:newMem }
+    newMem[v] = n
+    return {
+      c: tail
+      s: sTail
+      m: newMem
+    }
 
   # CondC
-  if h instanceof If
-    return { c:[h.cond, new Branch, t...], s:[h.st, h.sf, s...], m }
+  if head instanceof If
+    return {
+      c: [head.cond, new Branch, tail...]
+      s: [head.st, head.sf, s...]
+      m
+    }
 
   # CondT, CondF
-  if h instanceof Branch
-    [b, stmtT, stmtF, st...] = s
+  if head instanceof Branch
+    [b, stmtT, stmtF, sTail...] = s
     comm = if b then stmtT else stmtF
-    return { c:[comm, t...], s:st, m }
+    return {
+      c: [comm, tail...]
+      s: sTail
+      m
+    }
 
   # Secv
-  if h instanceof Seq
-    return { c:[h.s1, h.s2, t...], s, m }
+  if head instanceof Seq
+    return {
+      c: [head.s1, head.s2, tail...]
+      s
+      m
+    }
 
 
   # IterC
-  if h instanceof While
-    return { c:[h.cond, new Loop, t...], s:[h.cond, h.body, s...], m }
+  if head instanceof While
+    return {
+      c:[head.cond, new Loop, tail...]
+      s:[head.cond, head.body, s...]
+      m
+    }
 
   # IterT, IterF
-  if h instanceof Loop
-    [loopAgain, cond, body, st...] = s
+  if head instanceof Loop
+    [loopAgain, cond, body, sTail...] = s
     if loopAgain
       whileStmt = new While {cond, body}
-      return {c:[body, whileStmt, t...], s:st, m}
+      return {
+        c: [body, whileStmt, tail...]
+        s: sTail
+        m
+      }
     else
-      return {c:t, s:st, m}
+      return {
+        c: tail
+        s: sTail
+        m
+      }
 
-  throw new Error("#{h} didn't match anything for transition")
+  throw new Error("#{head} didn't match anything for transition")
 
 
 MAX_N_STATES = 1000

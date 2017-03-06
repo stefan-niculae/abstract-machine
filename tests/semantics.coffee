@@ -3,7 +3,7 @@
 
 
 
-describe 'The transition function for int expressions', ->
+describe 'The transition function for arithmetic expressions', ->
 
   it 'can move an int from c to s', ->
     state =
@@ -85,7 +85,7 @@ describe 'The transition function for int expressions', ->
   it 'cannot divide by zero', ->
     state =
       c: ['/']
-      s: [1, 0]
+      s: [0, 1]
       m: {}
     expect(-> trans(state)).toThrowError 'division by zero'
 
