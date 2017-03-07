@@ -62,7 +62,7 @@ describe 'The parser for conditions & expressions', ->
     expect(parse(input)).toEqual new ValOf
       var: 'var'
 
-  # TODO
+  # FIXME
 #  it 'does correct order of operations (a + b/c)', ->
 #    input = '4 + 6/2'
 #    expect(parse(input)).toEqual new Expr
@@ -139,12 +139,12 @@ describe 'The parser for commands', ->
         op: '+'
         e2: 1
 
-#  # TODO
+#  # FIXME
 #  it "doesn't allow keyword assignment", ->
 #    input = 'false = 5'
 #    expect(-> parse(input)).toThrowError "false is a keyword, it can't be used as a variable name"
 #
-#  # TODO
+#  # FIXME
 #  it "doesn't allow keyword comparison", ->
 #    input = 'while < 5'
 #    expect(-> parse(input)).toThrowError "while is a keyword, it can't be used as a variable name"

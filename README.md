@@ -43,7 +43,7 @@ Nearley playground: https://omrelli.ug/nearley-playground
 
 
 ## Test
-- `node_modules/.bin/jasmine tests/syntax.js tests/semantics.js`
+- `node_modules/.bin/jasmine tests/syntax.js tests/semantics.js tests/programs.js`
 
 
 ## Run
@@ -57,7 +57,7 @@ Open `app/page.html`
 
 ## TODO
 Next:
-- break & continue tests
+- fix & test break & continue
 - explanation for each evaluation step
 
 
@@ -72,3 +72,5 @@ Future:
 - more helpful error messages (including line number)
 - prettier visualization
 - newline for sequencing
+- comments
+- functions

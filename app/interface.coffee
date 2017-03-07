@@ -23,51 +23,7 @@ EXAMPLES = [
     continue! ;
     while true do ()
   }
-
-  """
-
-#  """
-#  outer = 0;
-#  while outer != 5 do {
-#    outer = 5;
-#    inner = 0;
-#    while inner < 2 do {
-#      inner = inner + 1;
-#      continue!;
-#      outer = 100
-#    }
-#  }
-#  """,
-
-
-#  """
-#  x = 3;
-#  while x > 0 do
-#    x = x - 1
-#  """
-
-
-#  """
-#  x = 0;
-#  while x < 2 do {
-#    x = x + 1;
-#    continue!;
-#    x = 0
-#  };
-#  y = 100
-#  """,
-
-
-#  # state 17 has the head Break
-#  """
-#  x = 0;
-#  while x == 0 do {
-#    x = 1;
-#    break!;
-#    x = 2
-#  };
-#  y = 100
-#  """,
+  """,
 
   """
   a = 1;

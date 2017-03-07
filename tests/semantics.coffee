@@ -337,9 +337,6 @@ describe 'The transition function for branching and looping', ->
       s: []
       m: x: 1
 
-  # TODO tests for nested break / continue
-
-
   it 'does not allow naked break expressions', ->
     state =
       c: [new Break]
@@ -354,7 +351,7 @@ describe 'The transition function for branching and looping', ->
       m: {}
     expect(-> trans(state)).toThrowError 'naked break/continue'
 
-#  # TODO
+#  # FIXME
 #  it 'does not cause a naked break to affect later loops', ->
 #    state =
 #      c: [new Break, new While(cond: true, body: new Skip)]
@@ -362,7 +359,7 @@ describe 'The transition function for branching and looping', ->
 #      m: {}
 #    expect(-> trans(state)).toThrowError 'naked break/continue'
 #
-#  # TODO
+#  # FIXME
 #  it 'does not cause a naked continue to affect later loops', ->
 #    state =
 #      c: [new Continue, new While(cond: true, body: new Skip), new Skip]
