@@ -5,6 +5,8 @@
 \usepackage{amsmath}
 \usepackage{bm}
 
+\pagenumbering{gobble}  % no page number
+
 \definecolor{grey}{RGB}{150,150,150}
 
 % http://tex.stackexchange.com/questions/102299/automatic-line-break-for-writing-context-free-grammars
@@ -50,10 +52,12 @@ Non-terminals:
 
 
 \newpage
-\thispagestyle{empty} % no page number
 \section*{Rules}
 
-Arithmetic expressions $(E)$:
+Initial configuration of executing statement $S$: $ \langle S, \emptyset, \emptyset \rangle $.
+
+\vspace{2em}
+\noindent Arithmetic expressions $(E)$:
 \begin{align*}
 \langle n  \bm{c},  \bm{s},  \bm{m} \rangle  &\rightarrow   \langle  \bm{c}, n  \bm{s},  \bm{m} \rangle \\
 \langle v  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  m(v),  \bm{s},  \bm{m} \rangle \\
@@ -61,7 +65,12 @@ Arithmetic expressions $(E)$:
 \langle iop \ \bm{c}, n_2 n_1  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c}, n  \bm{s},  \bm{m} \rangle  \ \text{where} \ n = n_1\ \underline{iop} \ n_2
 \end{align*}
 
-\vspace{1em}
+Execution will be guarded against division by zero.
+
+
+
+
+\vspace{2em}
 \noindent Boolean conditions $(C)$:
 \begin{align*}
 \langle b  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle b, n  \bm{s},  \bm{m} \rangle \\
@@ -69,7 +78,8 @@ Arithmetic expressions $(E)$:
 \langle bop \  \bm{c}, n_2 n_1  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c}, b  \bm{s},  \bm{m} \rangle \  \text{where} \ b = n_1\ \underline{bop}\ n_2
 \end{align*}
 
-\vspace{1em}
+
+\vspace{2em}
 \noindent Statements $(S)$:
 \begin{align*}
 \langle ()  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  \bm{s},  \bm{m} \rangle \\
@@ -77,12 +87,14 @@ Arithmetic expressions $(E)$:
 \langle v=E  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle E\ save\  \bm{c}, v  \bm{s},  \bm{m} \rangle \\
 \langle save \  \bm{c}, n v  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c},  \bm{s},  \bm{m}[v=n] \rangle \\
 \langle continue \  \bm{c}, \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c'},  \bm{s},  \bm{m} \rangle \\
-\langle break \  \bm{c}, \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c''},  \bm{s},  \bm{m} \rangle
+\langle break \  \bm{c}, \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \bm{c''},  \bm{s},  \bm{m} \rangle \\
+\langle exit \  \bm{c}, \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \emptyset,  \emptyset, \emptyset \rangle
 \end{align*}
-where $\bm{c'}$ are the commands up to the first $while$ \\
-and $\bm{c''}$ are the commands up to the first $while$ (inclusive)
 
-\vspace{1em}
+where $\bm{c'} :=$  the first $while$ in $\bm{c}$ and the commands after it; and $\bm{c''} :=$ the commands after the first $while$ (excluding it).
+
+
+\newpage
 \noindent Branching $(if)$:
 \begin{align*}
 \langle (if\ C\ then\ S_t\ else\ S_f)  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle C\ branch\  \bm{c}, S_t S_f  \bm{s},  \bm{m} \rangle \\
@@ -90,7 +102,8 @@ and $\bm{c''}$ are the commands up to the first $while$ (inclusive)
 \langle branch\  \bm{c}, false\ S_t S_f  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle S_f  \bm{c},  \bm{s},  \bm{m} \rangle
 \end{align*}
 
-\vspace{1em}
+
+\vspace{2em}
 \noindent Looping $(while)$:
 \begin{align*}
 \langle (while\ C\ do\ S)  \bm{c},  \bm{s},  \bm{m} \rangle    &\rightarrow  \langle C\ loop\  \bm{c}, C S  \bm{s},  \bm{m} \rangle \\
@@ -98,7 +111,7 @@ and $\bm{c''}$ are the commands up to the first $while$ (inclusive)
 \langle loop\  \bm{c}, true\  C S  \bm{s},  \bm{m} \rangle    &\rightarrow   \langle S (while\ C\ do\ S)  \bm{c},  \bm{s},  \bm{m} \rangle 
 \end{align*}
 
-
+Execution will be guarded against infinite cycles.
 
 
 \end{document}

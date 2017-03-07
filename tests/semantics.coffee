@@ -1,8 +1,6 @@
 {trans, finalState} = require '../src/evaluator'
 {Assign, Seq, If, While, ValOf, Expr, Cond, Save, Branch, Loop, Skip, Break, Continue, Exit} = require '../src/types'
 
-# TODO tests for break & continue & nested
-
 
 describe 'The transition function for arithmetic expressions', ->
 
@@ -236,9 +234,10 @@ describe 'The transition function for commands', ->
       s1: new Exit
       s2: assignment
     expect(result).toEqual
-      c: [assignment]
+      c: []
       s: []
       m: {}
+      terminationCause: 'exit called'
 
 
 
@@ -312,6 +311,65 @@ describe 'The transition function for branching and looping', ->
       s: [8]
       m: {}
 
+  it 'can break out of a loop', ->
+    whileStmt = new While
+      cond: true
+      body: new Skip
+    state =
+      c: [new Break, new Assign(var: 'x', value: 2), whileStmt, new Skip]
+      s: []
+      m: x: 1
+    expect(trans(state)).toEqual
+      c: [new Skip]
+      s: []
+      m: x: 1
+
+  it 'can continue inside a loop', ->
+    whileStmt = new While
+      cond: true
+      body: new Skip
+    state =
+      c: [new Continue, new Assign(var: 'x', value: 2), whileStmt, new Skip]
+      s: []
+      m: x: 1
+    expect(trans(state)).toEqual
+      c: [whileStmt, new Skip]
+      s: []
+      m: x: 1
+
+  # TODO tests for nested break / continue
+
+
+  it 'does not allow naked break expressions', ->
+    state =
+      c: [new Break]
+      s: []
+      m: {}
+    expect(-> trans(state)).toThrowError 'naked break/continue'
+
+  it 'does not allow naked continue expressions', ->
+    state =
+      c: [new Break, new Skip]
+      s: []
+      m: {}
+    expect(-> trans(state)).toThrowError 'naked break/continue'
+
+#  # TODO
+#  it 'does not cause a naked break to affect later loops', ->
+#    state =
+#      c: [new Break, new While(cond: true, body: new Skip)]
+#      s: []
+#      m: {}
+#    expect(-> trans(state)).toThrowError 'naked break/continue'
+#
+#  # TODO
+#  it 'does not cause a naked continue to affect later loops', ->
+#    state =
+#      c: [new Continue, new While(cond: true, body: new Skip), new Skip]
+#      s: []
+#      m: {}
+#    expect(-> trans(state)).toThrowError 'naked break/continue'
+
 
 
 describe 'The evaluation function', ->
@@ -324,17 +382,22 @@ describe 'The evaluation function', ->
     expect(result.c).toEqual []
     expect(result.m).toEqual {x: 2}
 
-  # FIXME
   it 'guards against infinite cycles', ->
-    state =
-      c: [new While cond: true, body: new Skip]
-      s: []
-      m: {}
-    expect(trans(state).m).toEqual {}
+    result = finalState new While
+      cond: true
+      body: new Skip
+    expect(result.m).toEqual {}
+    expect(result.terminationCause).toEqual 'execution limit reached'
 
-  # TODO self assignment in while
-  """
-  x = 3;
-  while x > 0 do
-    x = x - 1
-  """
+  it 'can do self-assignment', ->
+    result = finalState new Seq
+      s1: new Assign
+        var: 'x'
+        value: 100
+      s2: new Assign
+        var: 'x'
+        value: new Expr
+          e1: new ValOf(var: 'x')
+          op: '-'
+          e2: 1
+    expect(result.m).toEqual x: 99

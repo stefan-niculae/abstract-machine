@@ -1,4 +1,4 @@
-$ = require 'jquery'
+$ = require 'jquery/dist/jquery.slim'
 JSONFormatter = require 'json-formatter-js'
 
 parse = require '../src/parser'
@@ -9,6 +9,23 @@ require './style'
 
 
 EXAMPLES = [
+  """
+  while true do {
+    break!;
+    while true do ()
+  }
+  """
+
+  """
+  x = 1;
+  while x > 0 do {
+    x = x - 1;
+    continue! ;
+    while true do ()
+  }
+
+  """
+
 #  """
 #  outer = 0;
 #  while outer != 5 do {
@@ -21,6 +38,14 @@ EXAMPLES = [
 #    }
 #  }
 #  """,
+
+
+#  """
+#  x = 3;
+#  while x > 0 do
+#    x = x - 1
+#  """
+
 
 #  """
 #  x = 0;
@@ -62,13 +87,11 @@ EXAMPLES = [
   }
   """,
 
-  # TODO: check binding for while .. do with no brackets
   """
   outer = 0;
   while outer < 2 do {
-    while true do {
-      break!
-    };
+    while true do
+      break!;
     outer = outer + 1
   }
   """
@@ -88,6 +111,11 @@ evalOutput   = $ '#evaluation-output'
 evalControl  = $ '#evaluation-control'
 currStateBox = $ '#current-state'
 
+class Configuration  # for better readability in the viewer
+  constructor: ({@c, @s, @m, terminationCause}) ->
+    if terminationCause?  # only whow it if it exists
+      @terminationCause = terminationCause
+
 # Fill evaluation output box
 showState = (idx) ->
   if idx is 'last'
@@ -103,10 +131,11 @@ showState = (idx) ->
   if +currStateBox.val() isnt idx+1
     currStateBox.val idx+1
 
+  state = @states[idx]
   # Fill output box
   evalOutput
     .removeClass 'info error'
-    .html jsonViewer @states[idx]
+    .html jsonViewer new Configuration state
 
 
 # React to input box change
@@ -168,6 +197,7 @@ parseProgram = ->
 
   try
     parsed = parse program
+    console.log JSON.stringify parsed
 
     if parsed is undefined
       throw new Error "Cannot parse"  # will be caught below

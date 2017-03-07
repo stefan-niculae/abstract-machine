@@ -166,14 +166,6 @@ trans = ({c, s, m}) ->
         m
       }
 
-  if head instanceof Exit
-    return {
-      c: tail
-      s
-      m
-    }
-
-
   indexOfWhile = (inclusive) ->
     for statement, idx in c
       if statement instanceof While
@@ -181,11 +173,11 @@ trans = ({c, s, m}) ->
           return idx + 1
         else
           return idx
-    return -1
+    throw new Error 'naked break/continue'
 
 
   if head instanceof Continue
-  # Skip up to the while BUT leave the While statement
+    # Skip up to the while BUT leave the While statement
     remaining = c[indexOfWhile(inclusive=false)...]
 
     return {
@@ -195,13 +187,20 @@ trans = ({c, s, m}) ->
     }
 
   if head instanceof Break
-# Skip up to the while AND the While statement
+    # Skip up to the while AND the While statement
     remaining = c[indexOfWhile(inclusive=true)...]
 
     return {
       c: remaining
       s
       m
+    }
+
+  if head instanceof Exit
+    return {
+      c: []
+      s: []
+      m: {}
     }
 
 
@@ -217,21 +216,22 @@ evaluate = (program) ->
     m: {}
   states = [current]
 
-  willExit = false
-  # Repeatedly apply the transition function, returning the state at each step
+  # While there are still commands to left to execute
   while current.c.length > 0
-    willExit = true if current.c[0] instanceof Exit
+    exitCalled = current.c[0] instanceof Exit
+    limitReached = states.length >= MAX_N_STATES
 
+    # Repeatedly apply the transition function
     current = trans(current)
+    current.terminationCause = 'exit called' if exitCalled
+    current.terminationCause = 'execution limit reached' if limitReached
+
+    # Remember the state at each step
     states.push current
 
-    if willExit
-      console.warn 'exiting'
-      break
+    # Abnormal execution termination
+    break if exitCalled or limitReached
 
-    if states.length > MAX_N_STATES
-      console.warn "maximum number of states reached (#{MAX_N_STATES}), stopping"
-      break
 
   return states
 

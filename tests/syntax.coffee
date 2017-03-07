@@ -1,8 +1,6 @@
 parse = require '../src/parser'
 {Assign, Seq, If, While, ValOf, Expr, Cond, Skip, Break, Continue, Exit} = require '../src/types'
 
-# TODO tests for break & continue
-
 
 describe 'The parser for literals', ->
 
@@ -22,6 +20,25 @@ describe 'The parser for literals', ->
     input = 'false'
     expect(parse(input)).toEqual false
 
+  it 'can parse an alphabetic variable', ->
+    input = 'variable'
+    expect(parse(input)).toEqual new ValOf var: 'variable'
+
+  it 'can parse an alphanumeric variable', ->
+    input = 'variable2'
+    expect(parse(input)).toEqual new ValOf var: 'variable2'
+
+  it 'can parse an alphanumeric & underscores variable', ->
+    input = 'variable_2'
+    expect(parse(input)).toEqual new ValOf var: 'variable_2'
+
+  it 'can parse a variable starting with underscore', ->
+    input = '_variable'
+    expect(parse(input)).toEqual new ValOf var: '_variable'
+
+  it 'does not allow variables starting with a digit', ->
+    input = '1var = 0'
+    expect(-> parse(input)).toThrowError
 
 
 describe 'The parser for conditions & expressions', ->
@@ -45,26 +62,26 @@ describe 'The parser for conditions & expressions', ->
     expect(parse(input)).toEqual new ValOf
       var: 'var'
 
-  it 'does correct order of operations (a + b/c)', ->
-    input = '4 + 6/2'
-    expect(parse(input)).toEqual new Expr
-      e1: 4
-      op: '+'
-      e2: new Expr
-        e1: 6
-        op: '/'
-        e2: 2
-
   # TODO
-#  it 'does correct order of operations (a/b + c)', ->
-#    input = '4/2 + 6'
+#  it 'does correct order of operations (a + b/c)', ->
+#    input = '4 + 6/2'
 #    expect(parse(input)).toEqual new Expr
-#      e1: new Expr
-#        e1: 4
+#      e1: 4
+#      op: '+'
+#      e2: new Expr
+#        e1: 6
 #        op: '/'
 #        e2: 2
-#      op: '+'
-#      e2: 6
+
+  it 'does correct order of operations (a/b + c)', ->
+    input = '4/2 + 6'
+    expect(parse(input)).toEqual new Expr
+      e1: new Expr
+        e1: 4
+        op: '/'
+        e2: 2
+      op: '+'
+      e2: 6
 
   it 'does arith expr parens (div)', ->
     input = '4 + (6/2)'
@@ -87,16 +104,15 @@ describe 'The parser for conditions & expressions', ->
       op: '/'
       e2: 2
 
-  # TODO: currently they bind to the left
-#  it 'sequences operations to the right', ->
-#    input = '10 / 2 * 4' # ~> (10/2) * 4
-#    expect(parse(input)).toEqual new Expr
-#      e1: new Expr
-#        e1: 10
-#        op: '/'
-#        e2: 2
-#      op: '*'
-#      e2: 4
+  it 'sequences operations to the right', ->
+    input = '10 / 2 * 4' # ~> (10/2) * 4
+    expect(parse(input)).toEqual new Expr
+      e1: new Expr
+        e1: 10
+        op: '/'
+        e2: 2
+      op: '*'
+      e2: 4
 
 
 
@@ -123,19 +139,15 @@ describe 'The parser for commands', ->
         op: '+'
         e2: 1
 
-  # TODO
+#  # TODO
 #  it "doesn't allow keyword assignment", ->
 #    input = 'false = 5'
 #    expect(-> parse(input)).toThrowError "false is a keyword, it can't be used as a variable name"
-
-  # TODO
+#
+#  # TODO
 #  it "doesn't allow keyword comparison", ->
 #    input = 'while < 5'
 #    expect(-> parse(input)).toThrowError "while is a keyword, it can't be used as a variable name"
-
-  it 'does not allow variables starting with a digit', ->
-    input = '1var = 0'
-    expect(-> parse(input)).toThrowError
 
   it 'can parse sequenced statements', ->
     input = 'x = 0; ()'
@@ -158,6 +170,16 @@ describe 'The parser for commands', ->
       s2: new Assign
         var: "y"
         value: 1
+
+  it 'can parse the break command', ->
+    input = 'break!'
+    expect(parse(input)).toEqual new Break
+
+
+  it 'can parse the continue command', ->
+    input = 'continue!'
+    expect(parse(input)).toEqual new Continue
+
 
   it 'can parse the exit command', ->
     input = 'exit!'
