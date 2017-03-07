@@ -60,16 +60,27 @@ class Configuration  # for better readability in the viewer
     if terminationCause?  # only whow it if it exists
       @terminationCause = terminationCause
 
+Number.prototype.clamp = (min, max) ->
+  return min if this < min
+  return max if this > max
+  return this
+
+
 # Fill evaluation output box
 showState = (idx) ->
+  lastIdx = @states.length - 1
+  if idx is 'first'
+    idx = 0
   if idx is 'last'
-    idx = @states.length - 1
+    idx = lastIdx
 
   currIdx = +currStateBox.val() - 1
   if idx is 'prev'
     idx = currIdx - 1
   if idx is 'next'
     idx = currIdx + 1
+
+  idx = idx.clamp 0, lastIdx
 
   # Update if set programatically
   if +currStateBox.val() isnt idx+1
@@ -88,12 +99,10 @@ currStateBox
     nr = currStateBox.val()
     showState +nr - 1
 
-$('#prev-state').click (e) ->
-  e.preventDefault()
-  showState('prev')
-$('#next-state').click (e) ->
-  e.preventDefault()
-  showState('next')
+$('#first-state').click (e) -> e.preventDefault(); showState 'first'
+$('#prev-state') .click (e) -> e.preventDefault(); showState 'prev'
+$('#next-state') .click (e) -> e.preventDefault(); showState 'next'
+$('#last-state') .click (e) -> e.preventDefault(); showState 'last'
 
 
 # React to the new states of execution
