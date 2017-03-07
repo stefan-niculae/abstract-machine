@@ -91,7 +91,7 @@ Execution will be guarded against division by zero.
 \langle exit \  \bm{c}, \bm{s},  \bm{m} \rangle    &\rightarrow   \langle  \emptyset,  \emptyset, \emptyset \rangle
 \end{align*}
 
-where $\bm{c'} :=$  the first $while$ in $\bm{c}$ and the commands after it; and $\bm{c''} :=$ the commands after the first $while$ (excluding it).
+where $\bm{c'} :=$  the first $artificial\ while$ in $\bm{c}$ and the commands after it; and $\bm{c''} :=$ the commands after the first $artificial\ while$ (excluding it).
 
 
 \newpage
@@ -113,5 +113,6 @@ where $\bm{c'} :=$  the first $while$ in $\bm{c}$ and the commands after it; and
 
 Execution will be guarded against infinite cycles.
 
+After evaluating the condition, we flip the $artificial$ flag on. That is because we should only $break/continue$ inside loops. For a given loop, having evaluated its condition guarantees that we are inside of it. A loop we have not entered (not inserted in the command stack $artificially$), should be invisible to the $break/continue$.
 
 \end{document}

@@ -57,7 +57,6 @@ Open `app/page.html`
 
 ## TODO
 Next:
-- fix & test break & continue
 - explanation for each evaluation step
 
 

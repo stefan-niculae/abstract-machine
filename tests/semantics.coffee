@@ -307,7 +307,7 @@ describe 'The transition function for branching and looping', ->
       s: [true, cond, body, 8]
       m: {}
     expect(trans(state)).toEqual
-      c: [body, new While({cond, body}), new Skip]
+      c: [body, new While({cond, body, isArtificial: yes}), new Skip]
       s: [8]
       m: {}
 
@@ -315,6 +315,7 @@ describe 'The transition function for branching and looping', ->
     whileStmt = new While
       cond: true
       body: new Skip
+      isArtificial: true
     state =
       c: [new Break, new Assign(var: 'x', value: 2), whileStmt, new Skip]
       s: []
@@ -328,6 +329,7 @@ describe 'The transition function for branching and looping', ->
     whileStmt = new While
       cond: true
       body: new Skip
+      isArtificial: true
     state =
       c: [new Continue, new Assign(var: 'x', value: 2), whileStmt, new Skip]
       s: []
@@ -351,21 +353,19 @@ describe 'The transition function for branching and looping', ->
       m: {}
     expect(-> trans(state)).toThrowError 'naked break/continue'
 
-#  # FIXME
-#  it 'does not cause a naked break to affect later loops', ->
-#    state =
-#      c: [new Break, new While(cond: true, body: new Skip)]
-#      s: []
-#      m: {}
-#    expect(-> trans(state)).toThrowError 'naked break/continue'
-#
-#  # FIXME
-#  it 'does not cause a naked continue to affect later loops', ->
-#    state =
-#      c: [new Continue, new While(cond: true, body: new Skip), new Skip]
-#      s: []
-#      m: {}
-#    expect(-> trans(state)).toThrowError 'naked break/continue'
+  it 'does not cause a naked break to affect later loops', ->
+    state =
+      c: [new Break, new While(cond: true, body: new Skip)]
+      s: []
+      m: {}
+    expect(-> trans(state)).toThrowError 'naked break/continue'
+
+  it 'does not cause a naked continue to affect later loops', ->
+    state =
+      c: [new Continue, new While(cond: true, body: new Skip), new Skip]
+      s: []
+      m: {}
+    expect(-> trans(state)).toThrowError 'naked break/continue'
 
 
 

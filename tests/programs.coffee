@@ -3,7 +3,7 @@ parse = require '../src/parser'
 
 
 
-describe 'The program executor', ->
+describe 'The advanced looping behaviour', ->
 
   it 'handles self-assignment in loop', ->
     input = """
@@ -94,33 +94,88 @@ describe 'The program executor', ->
     expect(result.inner).toBe 2
 
 
-#  # FIXME
-#  it 'handles break in outer loop', ->
-#    input = """
-#      x = 1;
-#      while true do {
-#        break!;
-#        while true do ();
-#        x = 2
-#      }
-#    """
-#    result = finalState(parse(input)).m
-#    expect(result).toEqual
-#      x: 1
-#      # and no abnormal termination
+  it 'handles break in outer loop', ->
+    input = """
+      x = 1;
+      while true do {
+        break!;
+        while true do ();
+        x = 2
+      }
+    """
+    result = finalState(parse(input)).m
+    expect(result).toEqual
+      x: 1
+      # and no abnormal termination
 
-#  # FIXME
-#  it 'handles continue in outer loop', ->
-#
-#    input = """
-#      x = 2;
-#      while x > 0 do {
-#        x = x - 1;
-#        continue!;
-#        while true do ()
-#      }
-#    """
-#    result = finalState(parse(input)).m
-#    expect(result).toEqual
-#      x: 0
-#      # and no abnormal termination
+
+  it 'handles continue in outer loop', ->
+    input = """
+      x = 2;
+      while x > 0 do {
+        x = x - 1;
+        continue!;
+        while true do ()
+      }
+    """
+    result = finalState(parse(input)).m
+    expect(result).toEqual
+      x: 0
+      # and no abnormal termination
+
+
+  it 'handles 3 levels of nesting', ->
+    input = """
+    outer = 5;
+    while outer > 0 do {
+      outer = outer - 1;
+      inner = 2;
+      while inner > 0 do {
+        inner = inner - 1;
+        break!;
+        while true do ()
+      }
+    }
+    """
+    result = finalState(parse(input)).m
+    expect(result).toEqual
+      outer: 0
+      inner: 1
+      # and no abnormal termination
+
+
+
+describe 'The Evaluator', ->
+
+  it 'can compute minimum', ->
+    input =   """
+      a = 1;
+      b = 24;
+
+      if a < b then
+        min = a
+      else
+        min = b
+    """
+    result = finalState(parse(input)).m
+    expect(result).toEqual
+      a: 1
+      b: 24
+      min: 1
+
+
+  it 'can compute factorial', ->
+    input =   """
+      n = 5;
+      fact = 1;
+
+      while true do {
+        fact = fact * n;
+        n = n - 1;
+        if n == 0 then break! else ()
+      }
+    """
+    result = finalState(parse(input)).m
+    expect(result).toEqual
+      n: 0
+      fact: 120

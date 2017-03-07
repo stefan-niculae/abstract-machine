@@ -153,9 +153,9 @@ trans = ({c, s, m}) ->
   if head instanceof Loop
     [loopAgain, cond, body, sTail...] = s
     if loopAgain
-      whileStmt = new While {cond, body}
+      artificialWhile = new While {cond, body, isArtificial: yes}
       return {
-        c: [body, whileStmt, tail...]
+        c: [body, artificialWhile, tail...]
         s: sTail
         m
       }
@@ -166,9 +166,12 @@ trans = ({c, s, m}) ->
         m
       }
 
-  indexOfWhile = (inclusive) ->
+  indexOfArtificial = (inclusive) ->
+    # Break and continue statements only affect while statements
+    # artificially created by the language,
+    # not original ones written by the programmer
     for statement, idx in c
-      if statement instanceof While
+      if statement instanceof While and statement.isArtificial
         if inclusive
           return idx + 1
         else
@@ -178,7 +181,7 @@ trans = ({c, s, m}) ->
 
   if head instanceof Continue
     # Skip up to the while BUT leave the While statement
-    remaining = c[indexOfWhile(inclusive=false)...]
+    remaining = c[indexOfArtificial(inclusive=false)...]
 
     return {
       c: remaining
@@ -188,7 +191,7 @@ trans = ({c, s, m}) ->
 
   if head instanceof Break
     # Skip up to the while AND the While statement
-    remaining = c[indexOfWhile(inclusive=true)...]
+    remaining = c[indexOfArtificial(inclusive=true)...]
 
     return {
       c: remaining

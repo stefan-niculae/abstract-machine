@@ -10,45 +10,33 @@ require './style'
 
 EXAMPLES = [
   """
-  while true do {
-    break!;
-    while true do ()
-  }
-  """
-
-  """
-  x = 1;
-  while x > 0 do {
-    x = x - 1;
-    continue! ;
-    while true do ()
-  }
-  """,
-
-  """
   a = 1;
-  b = 7;
+  b = 24;
 
   if a < b then
     min = a
   else
     min = b
-  """,
+  """
+
+
+  """
+  n = 5;
+  fact = 1;
+
+  while true do {
+    fact = fact * n;
+    n = n - 1;
+    if n == 0 then break! else ()
+  }
+  """
+
 
   """
   x = 3; sum = 0;
   while x > 0 do {
     sum = sum + x;
     x = x - 1
-  }
-  """,
-
-  """
-  outer = 0;
-  while outer < 2 do {
-    while true do
-      break!;
-    outer = outer + 1
   }
   """
 ]

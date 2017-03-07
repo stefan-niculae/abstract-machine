@@ -46,9 +46,12 @@ class If
     assertType @sf, If, While, Seq, Assign, Skip, Break, Continue, Exit
 
 class While
-  constructor: ({@cond, @body}) ->
+  constructor: ({@cond, @body, isArtificial}) ->
     assertType @cond, Cond, Boolean
     assertType @body, If, While, Seq, Assign, Skip, Break, Continue, Exit
+    if isArtificial? and isArtificial
+      # for better viewer visibility, write it only if it is given among parameters
+      @isArtificial = yes
 
 class ValOf
   # Intentionally not flat for better readability
