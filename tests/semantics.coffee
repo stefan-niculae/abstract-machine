@@ -307,7 +307,7 @@ describe 'The transition function for branching and looping', ->
       s: [true, cond, body, 8]
       m: {}
     expect(trans(state)).toEqual
-      c: [body, new While({cond, body, isArtificial: yes}), new Skip]
+      c: [body, new While({cond, body, entered: yes}), new Skip]
       s: [8]
       m: {}
 
@@ -315,7 +315,7 @@ describe 'The transition function for branching and looping', ->
     whileStmt = new While
       cond: true
       body: new Skip
-      isArtificial: true
+      entered: true
     state =
       c: [new Break, new Assign(var: 'x', value: 2), whileStmt, new Skip]
       s: []
@@ -329,7 +329,7 @@ describe 'The transition function for branching and looping', ->
     whileStmt = new While
       cond: true
       body: new Skip
-      isArtificial: true
+      entered: true
     state =
       c: [new Continue, new Assign(var: 'x', value: 2), whileStmt, new Skip]
       s: []
