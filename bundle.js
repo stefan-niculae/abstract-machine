@@ -143,12 +143,12 @@ If = (function() {
 
 While = (function() {
   function While(arg) {
-    var isArtificial;
-    this.cond = arg.cond, this.body = arg.body, isArtificial = arg.isArtificial;
+    var entered;
+    this.cond = arg.cond, this.body = arg.body, entered = arg.entered;
     assertType(this.cond, Cond, Boolean);
     assertType(this.body, If, While, Seq, Assign, Skip, Break, Continue, Exit);
-    if ((isArtificial != null) && isArtificial) {
-      this.isArtificial = true;
+    if ((entered != null) && entered) {
+      this.entered = true;
     }
   }
 
@@ -327,7 +327,7 @@ clone = function(obj) {
 };
 
 trans = function(arg) {
-  var artificialWhile, b, body, c, comm, cond, f, head, inclusive, indexOfArtificial, loopAgain, m, n, n1, n2, newMem, ref1, remaining, s, sTail, stmtF, stmtT, tail, v;
+  var b, body, c, comm, cond, enteredWhile, f, head, inclusive, indexOfEnteredWhile, loopAgain, m, n, n1, n2, newMem, ref1, remaining, s, sTail, stmtF, stmtT, tail, v;
   c = arg.c, s = arg.s, m = arg.m;
   head = c[0], tail = 2 <= c.length ? slice.call(c, 1) : [];
   if ((ref1 = typeof head) === 'number' || ref1 === 'boolean') {
@@ -422,13 +422,13 @@ trans = function(arg) {
   if (head instanceof Loop) {
     loopAgain = s[0], cond = s[1], body = s[2], sTail = 4 <= s.length ? slice.call(s, 3) : [];
     if (loopAgain) {
-      artificialWhile = new While({
+      enteredWhile = new While({
         cond: cond,
         body: body,
-        isArtificial: true
+        entered: true
       });
       return {
-        c: [body, artificialWhile].concat(slice.call(tail)),
+        c: [body, enteredWhile].concat(slice.call(tail)),
         s: sTail,
         m: m
       };
@@ -440,11 +440,11 @@ trans = function(arg) {
       };
     }
   }
-  indexOfArtificial = function(inclusive) {
+  indexOfEnteredWhile = function(inclusive) {
     var i, idx, len, statement;
     for (idx = i = 0, len = c.length; i < len; idx = ++i) {
       statement = c[idx];
-      if (statement instanceof While && statement.isArtificial) {
+      if (statement instanceof While && statement.entered) {
         if (inclusive) {
           return idx + 1;
         } else {
@@ -455,7 +455,7 @@ trans = function(arg) {
     throw new Error('naked break/continue');
   };
   if (head instanceof Continue) {
-    remaining = c.slice(indexOfArtificial(inclusive = false));
+    remaining = c.slice(indexOfEnteredWhile(inclusive = false));
     return {
       c: remaining,
       s: s,
@@ -463,7 +463,7 @@ trans = function(arg) {
     };
   }
   if (head instanceof Break) {
-    remaining = c.slice(indexOfArtificial(inclusive = true));
+    remaining = c.slice(indexOfEnteredWhile(inclusive = true));
     return {
       c: remaining,
       s: s,
@@ -10864,7 +10864,7 @@ function updateLink(linkElement, obj) {
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $, Configuration, EXAMPLES, JSONFormatter, currStateBox, emptyInput, evalControl, evalOutput, evaluate, i, idx, jsonViewer, len, loadExample, parse, parseOutput, parseProgram, program, programInput, setupStates, showState;
+var $, Configuration, EXAMPLES, JSONFormatter, currStateBox, emptyInput, evalControl, evalOutput, evaluate, jsonViewer, loadExample, name, parse, parseOutput, parseProgram, program, programInput, setupStates, showState;
 
 $ = __webpack_require__(3);
 
@@ -10876,7 +10876,12 @@ evaluate = __webpack_require__(1).evaluate;
 
 __webpack_require__(5);
 
-EXAMPLES = ["a = 1;\nb = 24;\n\nif a < b then\n  min = a\nelse\n  min = b", "n = 5;\nfact = 1;\n\nwhile true do {\n  fact = fact * n;\n  n = n - 1;\n  if n == 0 then break! else ()\n}", "x = 3; sum = 0;\nwhile x > 0 do {\n  sum = sum + x;\n  x = x - 1\n}"];
+EXAMPLES = {
+  minimum: "a = 1;\nb = 24;\n\nif a < b then\n  min = a\nelse\n  min = b",
+  factorial: "n = 5;\nfact = 1;\n\nwhile true do {\n  fact = fact * n;\n  n = n - 1;\n  if n == 0 then break! else ()\n}",
+  euclid: "a = 18;\nb = 30;\n\nwhile a != b do\n  if a > b then\n    a = a - b\n  else\n    b = b - a",
+  slides: "x = 3; sum = 0;\nwhile x > 0 do {\n  sum = sum + x;\n  x = x - 1\n}"
+};
 
 jsonViewer = function(obj) {
   var formatter, openedLevels;
@@ -11001,7 +11006,6 @@ parseProgram = function() {
   }
   try {
     parsed = parse(program);
-    console.log(JSON.stringify(parsed));
     if (parsed === void 0) {
       throw new Error("Cannot parse");
     }
@@ -11019,23 +11023,23 @@ programInput.keyup(function() {
   return parseProgram();
 });
 
-loadExample = function(nr) {
-  programInput.val(EXAMPLES[nr]);
+loadExample = function(name) {
+  programInput.val(EXAMPLES[name]);
   return parseProgram();
 };
 
-for (idx = i = 0, len = EXAMPLES.length; i < len; idx = ++i) {
-  program = EXAMPLES[idx];
-  $('<a>').text("example " + (idx + 1)).attr({
+for (name in EXAMPLES) {
+  program = EXAMPLES[name];
+  $('<a>').text(name).attr({
     href: '#'
-  }).click((function(idx) {
+  }).click((function(name) {
     return function() {
-      return loadExample(idx);
+      return loadExample(name);
     };
-  })(idx)).appendTo('#examples');
+  })(name)).appendTo('#examples');
 }
 
-loadExample(0);
+loadExample('minimum');
 
 
 /***/ })
