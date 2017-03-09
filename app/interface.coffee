@@ -8,8 +8,9 @@ require './style'
 
 
 
-EXAMPLES = [
-  """
+EXAMPLES =
+
+  minimum: """
   a = 1;
   b = 24;
 
@@ -19,8 +20,7 @@ EXAMPLES = [
     min = b
   """
 
-
-  """
+  factorial: """
   n = 5;
   fact = 1;
 
@@ -31,15 +31,24 @@ EXAMPLES = [
   }
   """
 
+  euclid: """
+  a = 18;
+  b = 30;
 
+  while a != b do
+    if a > b then
+      a = a - b
+    else
+      b = b - a
   """
+
+  slides: """
   x = 3; sum = 0;
   while x > 0 do {
     sum = sum + x;
     x = x - 1
   }
   """
-]
 
 
 # Wrapper
@@ -150,7 +159,6 @@ parseProgram = ->
 
   try
     parsed = parse program
-    console.log JSON.stringify parsed
 
     if parsed is undefined
       throw new Error "Cannot parse"  # will be caught below
@@ -180,18 +188,18 @@ programInput.keyup -> parseProgram()
 
 
 # Fill program input box
-loadExample = (nr) ->
-  programInput.val EXAMPLES[nr]
+loadExample = (name) ->
+  programInput.val EXAMPLES[name]
   parseProgram()
 
 
 # List input examples
-for program, idx in EXAMPLES
+for name, program of EXAMPLES
   $ '<a>'
-    .text "example #{idx + 1}"
+    .text name
     .attr href: '#'
-    .click do (idx) -> -> loadExample idx  # FIXME: refactor into shorter version
+    .click do (name) -> -> loadExample name  # FIXME: refactor into shorter version
     .appendTo '#examples'
 
 # Load an initial example
-loadExample 0
+loadExample 'minimum'

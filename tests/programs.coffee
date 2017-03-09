@@ -179,3 +179,20 @@ describe 'The Evaluator', ->
     expect(result).toEqual
       n: 0
       fact: 120
+
+  it "can compute euclid's gcd", ->
+      input = """
+      a = 18;
+      b = 30;
+
+      while a != b do
+      if a > b then
+        a = a - b
+      else
+      b = b - a
+      """
+      result = finalState(parse(input)).m
+      expect(result).toEqual
+        a: 6
+        b: 6
+
