@@ -1,0 +1,104 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Small-Step Semantics</title>
+
+  <style>
+    body {
+      width: 900px;
+      margin: 3em auto;
+
+      background-color: #fbfbfb;
+    }
+
+    #configs {
+      width: 100%;
+
+      font-family: "Hack", monospace;
+      background-color: #fdfdfd;
+
+      padding: 1em 1.5em;
+      border-radius: 3px;
+      box-shadow: 0 0 5px 2px rgba(0,0,0, 0.075);
+    }
+
+
+    .code, .memory {
+      display: inline-block;
+    }
+    .code {
+      color: #0a0a0a;
+      width: 80%;
+    }
+    .memory {
+      color: darkblue;
+    }
+
+
+    .transition {;
+      margin-bottom: 3em;
+    }
+    .transition:last-child {
+      margin-bottom: inherit;
+    }
+
+
+    .snapshot.before .code,
+    .snapshot.before .memory  {
+      color: #9b9b9b;
+    }
+
+
+    .will-change,
+    .changed {
+      padding-left: .15em;
+      padding-right: .15em;
+    }
+    .will-change {
+      background-color: rgba(253, 39, 22, 0.26);
+      color: #707070
+    }
+    .changed {
+      background-color: rgba(60, 215, 8, 0.61);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="configs">
+  </div> <!-- #configs -->
+
+  <script src="lib/diff.js"></script>
+  <script src="lib/jquery.js"></script>
+  <script src="lib/coffee-script.js"></script>
+  <script type="text/coffeescript">
+    transitions = $('.transition')[1..]  # first one is the initial config
+
+    for trans in transitions
+      beforeElem = $(trans).find '.before .code'
+      afterElem = $(trans).find '.after .code'
+
+      # get diff
+      beforeStr = beforeElem.text()
+      afterStr = afterElem.text()
+      changes = JsDiff.diffWords beforeStr, afterStr
+
+      # recreate with markings
+      beforeStr = afterStr = ''
+      for change in changes
+        if change.removed
+          beforeStr += '<span class="will-change" title="Will change in the next line">' + change.value + '</span>'
+
+        if change.added
+          afterStr += '<span class="changed" title="Has changed from the previous line">' + change.value + '</span>'
+
+        if (not change.removed) and (not change.added) # common
+          beforeStr += change.value
+          afterStr += change.value
+
+      # put text back
+      beforeElem.html beforeStr
+      afterElem.html afterStr
+  </script>
+</body>
+</html>
