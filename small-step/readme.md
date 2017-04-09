@@ -2,6 +2,10 @@
 
 Step-by-step vizualization of execution in Small-Step semantics.
 
+![screenshot](screenshot.png)
+
+
+
 ## dependencies
 
 - `ghci` with `Prelude` and `runhaskell` in `$PATH`
