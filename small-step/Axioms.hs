@@ -10,7 +10,7 @@ transS :: Stmt -> State Memory Stmt
 transS Skip =
   error "transS cannot be called with a Skip directly"
 
- -- delete leading skip
+-- delete leading skip
 transS (Seq Skip stmt) =
   return stmt
 
