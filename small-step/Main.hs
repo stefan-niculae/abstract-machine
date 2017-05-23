@@ -40,7 +40,6 @@ configsToHtml (initial : configs) =  -- first elem alone
   "</article>\n\n" ++
   configsToHtmlLoop (initial : configs)
 
-
 configsToHtmlLoop :: [Config] -> String
 configsToHtmlLoop [] = ""
 configsToHtmlLoop [_] = ""
@@ -80,9 +79,7 @@ main = do
   -- open the page for template
   contents <- readFile templateFilename
   if null contents then error $ "Error: nothing in page template - " ++ templateFilename else do
-
     -- generate new page content
     let contents' = replaceConfigs contents configs'
-
     -- write them back
-    writeFile pageFilename contents'  -- force lazy evaluation so the file can be written to
+    writeFile pageFilename contents'
