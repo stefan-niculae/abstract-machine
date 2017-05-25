@@ -115,7 +115,91 @@ testExpressions = [
       If (BOp varx Eq zero)
         one
         (App (Var "fib") (AOp varx Sub one))
-  ) $ App (Var "fib") seven
+  ) $ App (Var "fib") seven,
+
+  -- recursivity
+  -- let fib = * \x -> if x == 0
+  --                   then 1
+  --                   else * fib (x - 1) in
+  -- fib 7
+  -- TODO
+  LRc "fib" (
+    Fun "x" $
+      If (BOp varx Eq zero)
+        one
+        (App (Var "fib") (AOp varx Sub one))
+  ) $ App (Var "fib") seven,
+
+  -- homogenous pair
+  -- ( 0 , 1 )
+  -- :: ( int , int )
+  Tup zero one,
+
+  -- heterogenous pair
+  -- ( 0 , True )
+  -- :: ( int , bool )
+  Tup zero true,
+
+  -- nested pair
+  -- ( ( True , False ) , \x -> x + x )
+  -- :: ( ( bool , bool ) , int -> int )
+  Tup (Tup true false) (Fun "x" (AOp varx Add varx)),
+
+  -- pair as argument
+  -- \p -> fst p + snd p
+  -- TODO
+  Fun "p" $
+    AOp (Fst $ Var "p") Add (Snd $ Var "p"),
+
+  -- pair as argument - correct argument type
+  -- let addPair = \p -> fst p + snd p in
+  --   addPair (( 1 , 0 ))
+  -- TODO
+  Let "addPair" (
+    Fun "p" $
+      AOp (Fst $ Var "p") Add (Snd $ Var "p")
+  ) $ App (Var "addPair") (Tup one zero),
+
+  -- pair as argument - wrong argument type
+  -- let addPair = \pair -> fst pair + snd pair in
+  --   addPair (( 1 , 0 ))
+  -- TODO
+  Let "addPair" (
+    Fun "pair" $
+      AOp (Fst $ Var "pair") Add (Snd $ Var "pair")
+  ) $ App (Var "addPair") (Tup one true),
+
+  -- record
+  -- { a = 1 ;  b = True }
+  -- :: { a : int ; b : bool }
+  Rcd [("a", one), ("b", true)],
+
+  -- nested record
+  -- { a = 1 ;  b = True ;  r = { } }
+  -- :: { a : int ; b : bool ; r : { } }
+  Rcd [("a", one), ("b", true), ("r", Rcd [])],
+
+  -- correct access of receord field
+  -- { a = 1 } . a
+  -- :: int
+  Acc (Rcd [("a", one)]) "a",
+
+  -- access of non-existant field
+  -- { a = 1 } . b
+  -- tried to access non-existant field b from record: { a = 1 }
+  Acc (Rcd [("a", one)]) "b",
+
+  -- illegal access
+  -- True . x
+  -- tried to access field x from a non-record: True
+  Acc true "x",
+
+  -- record as argument
+  -- \r -> r . a + r . b
+  -- TODO
+  Fun "r" $
+    AOp (Acc (Var "r") "a") Add
+        (Acc (Var "r") "b")
 
   ]
 

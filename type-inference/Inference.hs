@@ -1,8 +1,7 @@
 module Inference where
 
-import Prelude hiding (lookup)
 import qualified Data.Map as Map  -- for context & substitutions
-import Data.Map
+import Data.Map hiding (map, lookup)
 import qualified Data.Set as Set  -- sets of type variables
 import Control.Monad.Except
 
@@ -51,17 +50,17 @@ generalize env t = Forall vars t
 infer ::  TypeEnv -> Exp -> TI (Subst, Type)
 infer env expr = case expr of
   -- a literal has the same type in any context
-  -- :INT (slide 7)
+  -- :INT (C8 slide 7)
   Lit (LInt _)  -> return (nullSubst, TInt)
-  -- :BOOL (slide 7)
+  -- :BOOL (C8 slide 7)
   Lit (LBool _) -> return (nullSubst, TBool)
 
-  Var n -> case lookup n env of
+  Var n -> case Map.lookup n env of
     Nothing    -> throwError $ "unbound variable: " ++ n
     Just sigma -> do t <- instantiate sigma
                      return (nullSubst, t)
 
-  -- :IOP (slide 8)
+  -- :IOP (C8 slide 8)
   AOp e1 _ e2 -> do
     (s1, t1) <- infer env e1
     (s2, t2) <- infer (apply s1 env) e2
@@ -69,7 +68,7 @@ infer env expr = case expr of
     s4 <- unify (apply s3 t2) TInt
     return (composeAll [s1, s2, s3, s4], TInt)
 
-  -- :BOP (slide 8)
+  -- :BOP (C8 slide 8)
   BOp e1 _ e2 -> do
     (s1, t1) <- infer env e1
     (s2, t2) <- infer (apply s1 env) e2
@@ -77,7 +76,7 @@ infer env expr = case expr of
     s4 <- unify (apply s3 t2) TInt
     return (composeAll [s1, s2, s3, s4], TBool)
 
-  -- :IF (slide 8)
+  -- :IF (C8 slide 8)
   If eb e1 e2 -> do
     (sb, tb) <- infer env eb
     sb' <- unify (apply sb tb) TBool -- do I apply sb here?
@@ -92,7 +91,7 @@ infer env expr = case expr of
     `catchError`
     \err -> throwError $ err ++ "\n in " ++ show (If eb e1 e2)
 
-  -- :FN (slide 10)
+  -- :FN (C8 slide 10)
   Fun x e -> do
     t <- fresh
     let envWithoutX = remove env x
@@ -101,7 +100,7 @@ infer env expr = case expr of
     (s1, t') <- infer env' e
     return (s1, TFun (apply s1 t) t')
 
-  -- :APP (slide 10)
+  -- :APP (C8 slide 10)
   App f x -> do
     t' <- fresh
     (s1, fType) <- infer env f
@@ -111,7 +110,7 @@ infer env expr = case expr of
     `catchError`
     \err -> throwError $ err ++ "\n in " ++ show (App f x)
 
-  -- :LET (slide 17)
+  -- :LET (C8 slide 17)
   Let x e1 e2 -> do
     (s1, t1) <- infer env e1
     let envWithoutX = remove env x
@@ -120,16 +119,62 @@ infer env expr = case expr of
     (s2, t2) <- infer (apply s1 env') e2
     return (s1 `compose` s2, t2)
 
-  -- ~ :LETREC (slide 23)
+  -- :LETREC (C8 slide 23)
+  LRc x e1 e2 -> do
+    -- TODO how do I do this?
+    -- get the type t1 of e1 inferred from the context where t1 is known
+    (s1, t1) <- infer env e1
+    let envWithoutX = remove env x
+        t1' = generalize (apply s1 env) t1
+        env' = insert x t1' envWithoutX
+    (s2, t2) <- infer (apply s1 env') e2
+    return (s1 `compose` s2, t2)
+
+  -- Pointfix operator
   Fix f -> do
     (s, ft) <- infer env f
     t <- fresh
     s' <- unify (TFun t t) ft
     return (s', apply s t)
 
+  -- tPAIR (C9 slide 2)
+  Tup e1 e2 -> do
+    (s1, t1) <- infer env e1
+    (s2, t2) <- infer (apply s1 env) e2
+    return (s1 `compose` s2, TPair t1 t2)
 
+  -- tFST (C9 slide 2)
+  Fst e -> do
+    (s, t) <- infer env e
+    case t of
+      TPair t1 _ -> return (s, t1)
+      _          -> throwError $ "fst applied to a non-pair: " ++ show e
 
+  -- tSND (C9 slide 2)
+  Snd e -> do
+    (s, t) <- infer env e
+    case t of
+      TPair _ t2 -> return (s, t2)
+      _          -> throwError $ "snd applied to a non-pair: " ++ show e
 
+  -- tRECORD (C9 slide 9)
+  Rcd entries -> do
+    -- infer independently, don't propagate substitutions
+    let labels = map fst entries  -- entry::(label, exp)
+    let exps   = map snd entries
+    tuples <- mapM (infer env) exps
+    let substs = map fst tuples -- tuple::[subst, type]
+    let types  = map snd tuples
+    return (composeAll substs, TRecd $ labels `zip` types)
+
+  -- tField (C9 slide 9)
+  Acc e label -> do
+    (s, t) <- infer env e
+    case t of
+      TRecd ts -> case lookup label ts of
+                    Just t' -> return (s, t')
+                    Nothing -> throwError $ "tried to access non-existant field " ++ label ++ " from record: " ++ show e
+      _        -> throwError $ "tried to access field " ++ label ++ " from a non-record: " ++ show e
 
 typeInference :: Exp -> TI Type
 typeInference e =
