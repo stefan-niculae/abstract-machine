@@ -14,7 +14,7 @@ The types are defined in `src/types`.
 The app behaviour lies in 'app/interface', the layout in 'app/page' and the form in 'app/style'.
 
 ## Demo
-Online: http://stefan1niculae.github.io/abstract-machine
+Online: http://stefann.eu/abstract-machine
 
 
 
