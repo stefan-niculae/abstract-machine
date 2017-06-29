@@ -1,5 +1,7 @@
 # abstract-machine
 
+`abstract-machine-app` folder
+
 Control stack, Work stack, Memory model of execution.
 
 For a triplet `<c, s, m>` we process commands in `c` one by one.
@@ -20,7 +22,7 @@ Online: http://stefann.eu/abstract-machine
 
 <p align="center">
 
-  <img src="https://github.com/stefan1niculae/abstract-machine/raw/master/app/demo.gif" alt="Demo Gif"/>
+  <img src="https://github.com/stefan-niculae/abstract-machine/raw/master/abstract-machine-app/webapp/demo.gif" alt="Demo Gif"/>
 
 </p>
 
