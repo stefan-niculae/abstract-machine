@@ -21,6 +21,7 @@ data Type = TVar String
           | TFun Type Type
           | TPair Type Type
           | TRecd [TField]
+          | URecd Type Type -- record union
           deriving (Eq, Ord)
 
 -- A scheme is a type in which a number of polymorphic type variables
@@ -44,6 +45,7 @@ instance Substituable Type where
   ftv (TFun t1 t2)  = ftv t1 `union` ftv t2
   ftv (TPair t1 t2) = ftv t1 `union` ftv t2
   ftv (TRecd ts)    = foldr union empty $ map ftv (map snd ts)
+  ftv (URecd r1 r2) = ftv r1 `union` ftv r2
 
   apply _ TInt          = TInt
   apply _ TBool         = TBool
@@ -53,6 +55,7 @@ instance Substituable Type where
   apply s (TFun  t1 t2) = TFun (apply s t1) (apply s t2)
   apply s (TPair t1 t2) = TPair (apply s t1) (apply s t2)
   apply s (TRecd ts)    = TRecd [(l, apply s t) | (l, t) <- ts]
+  apply s (URecd r1 r2) = URecd (apply s r1) (apply s r2)
 
 instance Substituable Scheme where
     ftv (Forall vars t)     = (ftv t) `Set.difference` (Set.fromList vars)
@@ -115,6 +118,7 @@ prType (TPair t1 t2) = text "(" <+> prType t1 <+> text "," <+> prType t2 <+> tex
 prType (TRecd ts)    = text "{" <+> intersperse (text ";") (map prField ts) <+> text "}"
   where prField :: TField -> Doc
         prField (label, t) = text label <+> text ":" <+> prType t
+prType (URecd r1 r2) = prType r1 <+> text "U" <+> prType r2 -- TODO parens?
 
 prParenType :: Type -> Doc
 prParenType t = case t of

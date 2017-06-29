@@ -19,6 +19,8 @@ unify (TVar u) t              = varBind u t
 unify t (TVar u)              = varBind u t
 unify TInt TInt               = return nullSubst
 unify TBool TBool             = return nullSubst
+-- TODO pair
+-- TODO record
 unify t1 t2                   = throwError $ "types do not unify: " ++ show t1 ++
                                              " vs " ++ show t2
 
@@ -121,14 +123,16 @@ infer env expr = case expr of
 
   -- :LETREC (C8 slide 23)
   LRc x e1 e2 -> do
-    -- TODO how do I do this?
     -- get the type t1 of e1 inferred from the context where t1 is known
-    (s1, t1) <- infer env e1
+
+    t <- fresh
     let envWithoutX = remove env x
-        t1' = generalize (apply s1 env) t1
-        env' = insert x t1' envWithoutX
-    (s2, t2) <- infer (apply s1 env') e2
-    return (s1 `compose` s2, t2)
+        -- env' = punem t in env
+        env' = envWithoutX `Map.union` Map.singleton x (Forall [] t) -- TODO make this a function
+    (s1, t1) <- infer env' e1
+    s2 <- unify (apply s1 t) t1
+    (s3, t2) <- infer (apply (s1 `compose` s2) env') e2
+    return (composeAll [s1, s2, s3], t2)
 
   -- Pointfix operator
   Fix f -> do
@@ -146,9 +150,10 @@ infer env expr = case expr of
   -- tFST (C9 slide 2)
   Fst e -> do
     (s, t) <- infer env e
-    case t of
-      TPair t1 _ -> return (s, t1)
-      _          -> throwError $ "fst applied to a non-pair: " ++ show e
+    t1 <- fresh
+    t2 <- fresh
+    s2 <- unify t (TPair t1 t2)
+    return (s `compose` s2, apply s2 t1)
 
   -- tSND (C9 slide 2)
   Snd e -> do
@@ -162,19 +167,27 @@ infer env expr = case expr of
     -- infer independently, don't propagate substitutions
     let labels = map fst entries  -- entry::(label, exp)
     let exps   = map snd entries
-    tuples <- mapM (infer env) exps
-    let substs = map fst tuples -- tuple::[subst, type]
-    let types  = map snd tuples
-    return (composeAll substs, TRecd $ labels `zip` types)
+    infers <- mapM (infer env) exps
+    let substs = map fst infers -- infer::(subst, type)
+    let types  = map snd infers
+    let composed = composeAll substs
+    return (composed, TRecd $ labels `zip` (map (apply composed) types))
 
   -- tField (C9 slide 9)
   Acc e label -> do
-    (s, t) <- infer env e
-    case t of
-      TRecd ts -> case lookup label ts of
-                    Just t' -> return (s, t')
-                    Nothing -> throwError $ "tried to access non-existant field " ++ label ++ " from record: " ++ show e
-      _        -> throwError $ "tried to access field " ++ label ++ " from a non-record: " ++ show e
+    (s1, t) <- infer env e
+    tlabel <- fresh
+    trest <- fresh
+    s2 <- unify t (URecd (TRecd [(label, tlabel)]) trest)
+    return (s1 `compose` s2, apply s2 tlabel)
+
+
+    -- -- TODO
+    -- case t of
+    --   TRecd ts -> case lookup label ts of
+    --                 Just t' -> return (s, t')
+    --                 Nothing -> throwError $ "tried to access non-existant field " ++ label ++ " from record: " ++ show e
+    --   _        -> throwError $ "tried to access field " ++ label ++ " from a non-record: " ++ show e
 
 typeInference :: Exp -> TI Type
 typeInference e =

@@ -104,18 +104,6 @@ testExpressions = [
   Let "f" true $
     App (Var "f") ten,
 
-  -- recursivity
-  -- let fib = * \x -> if x == 0
-  --                   then 1
-  --                   else * fib (x - 1) in
-  -- fib 7
-  -- TODO
-  Let "fib" (Fix $
-    Fun "x" $
-      If (BOp varx Eq zero)
-        one
-        (App (Var "fib") (AOp varx Sub one))
-  ) $ App (Var "fib") seven,
 
   -- recursivity
   -- let fib = * \x -> if x == 0
@@ -123,6 +111,26 @@ testExpressions = [
   --                   else * fib (x - 1) in
   -- fib 7
   -- TODO
+  -- Let "fib" (Fix $
+  --   Fun "x" $
+  --     If (BOp varx Eq zero)
+  --       one
+  --       (App (Var "fib") (AOp varx Sub one))
+  -- ) $ App (Var "fib") seven,
+
+  -- recursivity
+  -- let fib = * \x -> if x == 0
+  --                   then 1
+  --                   else * fib (x - 1) in
+  -- fib 7
+  -- TODO
+  LRc "fib" (
+    Fun "x" $
+      If (BOp varx Eq zero)
+        one
+        (App (Var "fib") (AOp varx Sub one))
+  ) $ Var "fib",
+
   LRc "fib" (
     Fun "x" $
       If (BOp varx Eq zero)
@@ -147,9 +155,9 @@ testExpressions = [
 
   -- pair as argument
   -- \p -> fst p + snd p
-  -- TODO
+  -- :: ( int , t2 ) -> int
   Fun "p" $
-    AOp (Fst $ Var "p") Add (Snd $ Var "p"),
+    AOp (Fst $ Var "p") Add one,
 
   -- pair as argument - correct argument type
   -- let addPair = \p -> fst p + snd p in
@@ -200,6 +208,16 @@ testExpressions = [
   Fun "r" $
     AOp (Acc (Var "r") "a") Add
         (Acc (Var "r") "b")
+
+
+  -- g = \f -> (f {x=3, y=7}).a + f({a=2, x=3})
+  -- :: ({x:int} -> {a:int, b:int}) -> int
+
+  -- f = \o -> {a=3, z=o.x, b=7}
+  -- :: {x:t} -> {a:int, z:t, b:int}
+
+  -- g f
+  -- :: int
 
   ]
 
