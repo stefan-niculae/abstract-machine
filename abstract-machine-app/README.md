@@ -1,3 +1,5 @@
+# abstract-machine-app
+
 Control stack, Work stack, Memory model of execution.
 
 For a triplet `<c, s, m>` we process commands in `c` one by one.
